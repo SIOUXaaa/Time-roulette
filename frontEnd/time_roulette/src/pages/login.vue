@@ -11,5 +11,8 @@ import LoginDiv from '../components/login.vue'
     display: flex;
     justify-content: center;
 }
+body{
+    margin: 0;
+}
 
 </style>
