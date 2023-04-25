@@ -72,7 +72,6 @@ import LeftMenu from '../components/LeftMenu.vue';
 }
 
 
-
 .schedule {
     height: 300px;
     box-shadow: 0 0 3px black;
