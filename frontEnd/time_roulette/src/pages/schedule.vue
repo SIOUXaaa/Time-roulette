@@ -27,10 +27,11 @@ import LeftMenu from '../components/LeftMenu.vue';
 <style scoped>
 .all {
     width: 100%;
-    height: 100%;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     background-color: #f1f5f9;
+
 }
 .TopMenu {
     width: 100%;
@@ -38,8 +39,8 @@ import LeftMenu from '../components/LeftMenu.vue';
 }
 .main {
     display: flex;
-    height: 100%;
-    margin: 10px;
+    height: calc(100vh - 70px);
+    margin-bottom: 10px;
 }
 .row {
     width: 100%;
@@ -48,13 +49,14 @@ import LeftMenu from '../components/LeftMenu.vue';
 
 .left {
     width: 100%;
-    height: 100%;
+    max-height: calc(100vh - 60px);
     margin-right: 10px;
 }
 .right {
     width: 100%;
     max-height: calc(100vh - 60px);
     margin-left: 50px;
+    margin-bottom: 10px;
     padding-right: 10px;
     padding-top: 10px;
     /* box-shadow: 0 0 3px black; */

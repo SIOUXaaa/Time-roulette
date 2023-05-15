@@ -6,7 +6,9 @@ defineComponent({
 })
 const activeIndex = ref("schedule")
 
-const handleSelect = () => {
+const handleSelect = (index: string) => {
+    activeIndex.value = index;
+    console.log(activeIndex.value);
     console.log("select");
 }
 
@@ -20,6 +22,7 @@ const handleSelect = () => {
         text-color="#000"
         active-text-color="rgb(34, 142, 108)"
         @select="handleSelect"
+        router
     >
         <el-menu-item index="schedule">
             <el-icon><Calendar /></el-icon>
@@ -39,6 +42,8 @@ const handleSelect = () => {
     justify-content: center;
     margin: 0 auto;
     text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    /* background-color: rgb(85, 118, 123); */
 }
 
 </style>

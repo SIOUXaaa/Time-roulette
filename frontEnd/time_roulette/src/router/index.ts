@@ -8,9 +8,14 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('../pages/login.vue')
     },
     {
-        path: '/index',
-        name: 'index',
-        component: ()=> import('../pages/index.vue')
+        path: '/schedule',
+        name: 'schedule',
+        component: ()=> import('../pages/schedule.vue')
+    },
+    {
+        path: '/memo',
+        name: 'memo',
+        component: ()=>import('../pages/memo.vue')
     },
     { path: '/', redirect: { name: 'Login' } }
 ]

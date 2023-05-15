@@ -24,7 +24,7 @@ const rules = ref({
     checkPassword: [
         { required: true, message: '请再次输入密码', trigger: 'blur' },
         {
-            validate: (rule: any, value: any, callback: any) => {
+            validator: (rule: any, value: any, callback: any) => {
                 if (value !== registerForm.value.password) {
                     callback(new Error('两次输入的密码不一致'));
                 }
