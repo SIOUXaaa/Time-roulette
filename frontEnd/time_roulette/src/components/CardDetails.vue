@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { defineComponent, ref, toRefs } from 'vue';
+import { defineComponent, ref, toRef, watch, toRefs } from 'vue';
 import { cardInfo } from '../pages/schedule.vue';
 import { Check, Delete } from '@element-plus/icons-vue';
+import { useDateFormat } from '@vueuse/shared';
 
 defineComponent({
     name: 'CardDetail'
@@ -16,42 +17,58 @@ const props = defineProps({
         type: Function,
         required: true
     },
-    visible: {
-        type: Boolean,
-        required: true
-    }
+    visible: Boolean
 });
-const time = ref('2023-1-1 0:0:0');
-const card = ref({ ...props.card });
+const cardDefault: cardInfo = {
+    id: -1,
+    title: '',
+    time: '',
+    address: '',
+    contents: ''
+};
+const time = ref('');
+const card = toRef(props, 'card');
+const tempCard = ref(cardDefault);
 
-const visible = ref(false);
+const visible = toRef(props, 'visible');
 
 const handleEdit = () => {
+    tempCard.value.time = time.value;
+    console.log(time.value.toString());
+    card.value = tempCard.value;
     props.updateCard(card.value);
-    visible.value = false;
 };
 
 const handleCancel = () => {
-    card.value = {
-        id: -1,
-        title: '',
-        time: '',
-        address: '',
-        contents: ''
-    };
+    card.value = cardDefault;
 };
+
+watch(
+    () => props.visible,
+    newValue => {
+        if (newValue) {
+            console.log(card.value);
+            tempCard.value = card.value;
+        }
+    }
+);
 </script>
 
 <template>
     <el-dialog v-model="visible" align-center class="dialog">
-        <el-form class="form" :model="card">
+        <el-form class="form">
             <el-form-item label="标题">
-                <el-input type="text" v-model="card.title" placeholder="输入标题谢谢喵" clearable />
+                <el-input
+                    type="text"
+                    v-model="tempCard.title"
+                    placeholder="输入标题谢谢喵"
+                    clearable
+                />
             </el-form-item>
             <el-form-item label="内容">
                 <el-input
                     type="text"
-                    v-model="card.contents"
+                    v-model="tempCard.contents"
                     placeholder="输入日程内容谢谢喵"
                     clearable
                 />
@@ -59,7 +76,7 @@ const handleCancel = () => {
             <el-form-item label="地点">
                 <el-input
                     type="text"
-                    v-model="card.address"
+                    v-model="tempCard.address"
                     placeholder="输入日程地点谢谢喵"
                     clearable
                 />
@@ -70,6 +87,7 @@ const handleCancel = () => {
                     type="datetime"
                     placeholder="选择时间谢谢喵"
                     class="selectTime"
+                    value-format="YYYY-MM-DD hh:mm:ss"
                 />
             </el-form-item>
 

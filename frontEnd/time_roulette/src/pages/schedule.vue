@@ -5,6 +5,7 @@ import TopBar from '../components/TopBar.vue';
 import LeftMenu from '../components/LeftMenu.vue';
 import Card from '../components/Card.vue';
 import CardDetails from '../components/cardDetails.vue';
+import { ElMessage } from 'element-plus';
 
 export type cardInfo = {
     id: number;
@@ -17,7 +18,7 @@ let list: cardInfo[] = reactive([
     {
         id: 1,
         title: 'a',
-        time: '2023.1.2',
+        time: '2023-1-2 0:0:0',
         address: '南区大饭店',
         contents:
             '今天要吃饭金天要吃饭今天要吃饭今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
@@ -25,7 +26,7 @@ let list: cardInfo[] = reactive([
     {
         id: 2,
         title: 'a',
-        time: '2023.1.15',
+        time: '2023-1-15 0:0:0',
         address: '南区大饭店',
         contents:
             '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
@@ -33,7 +34,7 @@ let list: cardInfo[] = reactive([
     {
         id: 3,
         title: 'a',
-        time: '2023.1.4',
+        time: '2023-1-4 0:0:0',
         address: '南区大饭店',
         contents:
             '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
@@ -51,9 +52,19 @@ let list: cardInfo[] = reactive([
     // { id: 14, title: 'a', time: '2023.1.12', address: '南区大饭店' }
 ]);
 
+const cardDefault: cardInfo = {
+    id: -1,
+    title: '',
+    time: '',
+    address: '',
+    contents: ''
+};
+
 const sortMode = ['按默认排序', '按时间排序'];
-// const sortIndex = ref(0);
 const sortOpe = ref('按默认排序');
+const showCard = ref(false);
+const cardValue = ref(cardDefault);
+
 const sortById = () => {
     list = list.sort((a, b) => a.id - b.id);
 };
@@ -74,6 +85,10 @@ const sortByDate = () => {
     });
 };
 
+const handleClose = () => {
+    showCard.value = false;
+};
+
 const deleteCard = (card: cardInfo) => {
     console.log('delete card:' + card.id);
     const index = list.findIndex(item => item === card);
@@ -83,13 +98,27 @@ const deleteCard = (card: cardInfo) => {
 };
 
 const updateCard = (card: cardInfo) => {
+    console.log(card);
+    if (card === cardDefault) {
+        ElMessage({
+            message: '你也妹输入啊，完成啥...',
+            type: 'warning'
+        });
+    }
     const index = list.findIndex(item => item.id === card.id);
     list[index] = card;
+    handleClose();
 };
 
-const addCard = (card: cardInfo) => {
-    
-}
+const addCard = () => {
+    editCard({ id: -1, title: '', time: '', address: '', contents: '' });
+};
+
+const editCard = (card: cardInfo) => {
+    cardValue.value = card;
+    // console.log(cardValue.value);
+    showCard.value = true;
+};
 
 sortById();
 </script>
@@ -100,7 +129,12 @@ sortById();
             <TopBar />
         </div>
         <el-row class="main">
-            <CardDetails :card="list[0]" :updateCard="updateCard" :visible="true" />
+            <CardDetails
+                :card="cardValue"
+                :updateCard="updateCard"
+                :visible="showCard"
+                :before-close="handleClose"
+            />
             <el-col :span="4" class="left">
                 <el-row class="control" justify="space-evenly" align="middle">
                     <el-row :gutter="20">
@@ -142,6 +176,7 @@ sortById();
                                 class="schedule"
                                 :card="item"
                                 :deleteCard="deleteCard"
+                                :editCard="editCard"
                             />
                         </transition-group>
 

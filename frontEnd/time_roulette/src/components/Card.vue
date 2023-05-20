@@ -8,22 +8,26 @@ defineComponent({
 });
 
 const props = defineProps({
-    card: Object as () => cardInfo,
-    deleteCard: Function
+    card: { type: Object as () => cardInfo, required: true },
+    deleteCard: { type: Function, required: true },
+    editCard: { type: Function, required: true }
 });
 
 // const cardId = props.card?.id;
 const card = props.card as cardInfo;
 
 const deleteCard = () => {
-    if (props.deleteCard !== undefined) props.deleteCard(card);
+    props.deleteCard(card);
 };
 
 const handleClick = () => {
     console.log(card.id);
 };
 
-const handleEdit = () => {};
+const handleEdit = () => {
+    // console.log(card);
+    props.editCard(card);
+};
 </script>
 
 <template>
@@ -45,7 +49,7 @@ const handleEdit = () => {};
                 size="small"
                 @click="handleEdit"
             />
-            <el-card class="box-card" @click="handleClick()">
+            <el-card class="box-card" @click="handleEdit">
                 <template #header>
                     <div class="card-header">
                         <span>{{ card.id }}</span>
