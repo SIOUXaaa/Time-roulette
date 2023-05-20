@@ -87,6 +87,10 @@ const updateCard = (card: cardInfo) => {
     list[index] = card;
 };
 
+const addCard = (card: cardInfo) => {
+    
+}
+
 sortById();
 </script>
 
@@ -101,7 +105,7 @@ sortById();
                 <el-row class="control" justify="space-evenly" align="middle">
                     <el-row :gutter="20">
                         <el-col :span="12">
-                            <el-button type="primary">添加</el-button>
+                            <el-button type="primary" @click="addCard">添加</el-button>
                         </el-col>
                         <el-col :span="12">
                             <el-button type="primary">删除</el-button>
