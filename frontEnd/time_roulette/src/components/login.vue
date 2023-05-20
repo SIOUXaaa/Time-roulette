@@ -29,7 +29,7 @@ const rules = ref({
 const handleClick = () => {};
 const handleLogin = () => {
     if (loginForm.value.account === 'test' && loginForm.value.password === '123456') {
-        router.push('/index');
+        router.push('/schedule');
     } else {
         ElMessage.error('用户密码错误');
     }

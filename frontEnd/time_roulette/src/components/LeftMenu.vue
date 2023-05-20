@@ -2,33 +2,24 @@
 import { ref, defineComponent } from 'vue';
 
 defineComponent({
-    name: "LeftMenu"
-})
-const activeIndex = ref("schedule")
+    name: 'LeftMenu'
+});
+const activeIndex = ref('schedule');
 
 const handleSelect = (index: string) => {
     activeIndex.value = index;
     console.log(activeIndex.value);
-    console.log("select");
-}
-
+    console.log('select');
+};
 </script>
 
 <template>
-    <el-menu
-        class="LeftMenu"
-        :default-active="activeIndex"
-        background-color="#f1f5f9"
-        text-color="#000"
-        active-text-color="rgb(34, 142, 108)"
-        @select="handleSelect"
-        router
-    >
-        <el-menu-item index="schedule">
+    <el-menu class="LeftMenu" :default-active="activeIndex" @select="handleSelect" router>
+        <el-menu-item index="schedule" class="item">
             <el-icon><Calendar /></el-icon>
             <span>日程</span>
         </el-menu-item>
-        <el-menu-item index="memo">
+        <el-menu-item index="memo" class="item">
             <el-icon><List /></el-icon>
             <span>备忘录</span>
         </el-menu-item>
@@ -36,14 +27,18 @@ const handleSelect = (index: string) => {
 </template>
 
 <style scoped>
-.LeftMenu{
+.LeftMenu {
+    min-width: 125px;
     width: 100%;
     height: 100%;
-    justify-content: center;
-    margin: 0 auto;
-    text-align: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    /* background-color: rgb(85, 118, 123); */
+    box-shadow: 0 0 8px #cdd0d6;
+    margin-top: 10px;
+    margin-left: 30px;
+    margin-right: 10px;
+    border-radius: 15px;
 }
 
+.item {
+    text-align: center;
+}
 </style>

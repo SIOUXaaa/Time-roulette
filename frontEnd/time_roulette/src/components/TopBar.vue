@@ -3,20 +3,19 @@
         class="TopMenu"
         :default-active="activeIndex"
         mode="horizontal"
-        background-color="#f1f5f9"
-        text-color="#000"
-        active-text-color="#ffd04b"
         @select="handleSelect"
         router
     >
         <el-menu-item index="me">
-            <el-avatar :icon="UserFilled" />
+            <el-icon :size="20">
+                <UserFilled />
+            </el-icon>
         </el-menu-item>
-        <el-menu-item index="login"> 
-            登陆
+        <el-menu-item index="login" class="barButton">
+            <el-button type="primary" class="button">登录</el-button>
         </el-menu-item>
-        <el-menu-item index="login"> 
-            注册
+        <el-menu-item index="login" class="barButton">
+            <el-button class="button">注册</el-button>
         </el-menu-item>
     </el-menu>
 </template>
@@ -45,7 +44,13 @@ const handleSelect = (index: string) => {
     align-items: center;
     justify-content: right;
     padding: 0 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 4px #cdd0d6;
+}
+.barButton{
+    width: min-content;
+    height: min-content;
+    padding: 0px;
+    margin: 10px;
 }
 
 </style>

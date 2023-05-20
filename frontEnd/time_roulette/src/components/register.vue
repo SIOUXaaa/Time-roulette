@@ -30,28 +30,26 @@ const rules = ref({
                 }
                 callback();
             },
-            message: "两次输入的密码不一致",
-            trigger: "blur"
+            message: '两次输入的密码不一致',
+            trigger: 'blur'
         }
     ]
 });
 const register = ref(null);
 const handleRegister = () => {
     if (register.value) {
-        (register.value as FormInstance).validate((valid) => {
+        (register.value as FormInstance).validate(valid => {
             if (!valid) {
-                ElMessage.error("两次输入的密码不一致");
+                ElMessage.error('两次输入的密码不一致');
             }
-        })
+        });
     }
-
-};  
+};
 const handleReset = () => {
     if (register.value) {
         (register.value as FormInstance).resetFields();
     }
 };
-
 </script>
 
 <template>

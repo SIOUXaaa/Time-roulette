@@ -17,6 +17,11 @@ const routes: Array<RouteRecordRaw> = [
         name: 'memo',
         component: ()=>import('../pages/memo.vue')
     },
+    {
+        path: '/test',
+        name: 'test',
+        component: ()=>import('../pages/test.vue')
+    },
     { path: '/', redirect: { name: 'Login' } }
 ]
 
