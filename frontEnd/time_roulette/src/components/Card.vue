@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, toRef } from 'vue';
 import { Delete, Edit } from '@element-plus/icons-vue';
 import { cardInfo } from '../pages/schedule.vue';
 
@@ -14,45 +14,50 @@ const props = defineProps({
 });
 
 // const cardId = props.card?.id;
-const card = props.card as cardInfo;
+// const cardRef = ref(props.card);
+const cardRef = toRef(props, 'card');
+const card = cardRef.value;
 
 const deleteCard = () => {
-    props.deleteCard(card);
+    props.deleteCard(cardRef.value);
 };
 
 const handleClick = () => {
-    console.log(card.id);
+    console.log(cardRef.value.id);
 };
 
 const handleEdit = () => {
     // console.log(card);
-    props.editCard(card);
+    props.editCard(cardRef.value);
 };
 </script>
 
 <template>
     <transition name="el-zoom-in-top">
         <div class="card">
-            <el-button
+            <!-- <el-button
                 class="delete"
                 type="danger"
                 :icon="Delete"
                 circle
                 size="small"
                 @click="deleteCard"
-            />
-            <el-button
+            /> -->
+            <el-button class="delete" circle type="danger" @click="deleteCard" size="small"
+                ><el-icon><Close /></el-icon
+            ></el-button>
+            <!-- <el-button
                 class="edit"
                 type="primary"
                 :icon="Edit"
                 circle
                 size="small"
                 @click="handleEdit"
-            />
+            /> -->
             <el-card class="box-card" @click="handleEdit">
                 <template #header>
                     <div class="card-header">
-                        <span>{{ card.id }}</span>
+                        <span>{{ cardRef.title }}</span>
                     </div>
                 </template>
                 <el-col>
@@ -61,21 +66,21 @@ const handleEdit = () => {
                             <el-icon><Reading /></el-icon>
                             <span>内容</span>
                         </el-col>
-                        <el-col class="contents" :span="16">{{ card.contents }} </el-col>
+                        <el-col class="contents" :span="16">{{ cardRef.contents }} </el-col>
                     </el-row>
                     <el-row class="address rows">
                         <el-col class="tabs" :span="8">
                             <el-icon><LocationFilled /></el-icon>
                             <span>地点</span>
                         </el-col>
-                        <el-col class="contents" :span="16">{{ card.address }}</el-col>
+                        <el-col class="contents" :span="16">{{ cardRef.address }}</el-col>
                     </el-row>
                     <el-row class="time rows">
                         <el-col class="tabs" :span="8">
                             <el-icon><Timer /></el-icon>
                             <span>时间</span>
                         </el-col>
-                        <el-col class="contents" :span="16">{{ card.time }}</el-col>
+                        <el-col class="contents" :span="16">{{ cardRef.time }}</el-col>
                     </el-row>
                 </el-col>
             </el-card>
@@ -94,6 +99,9 @@ const handleEdit = () => {
     top: 30px;
     right: 30px;
     display: none;
+    /* background-color: transparent;
+    border: none;
+    color: #f56c6c; */
 }
 
 .card:hover .delete {
@@ -127,6 +135,7 @@ const handleEdit = () => {
 .box-card:hover {
     color: #337ecc;
     background-color: #ecf5ff;
+    cursor: pointer;
 }
 .rows {
     margin: 3px;

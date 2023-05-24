@@ -1,20 +1,25 @@
 <script setup lang="ts">
-import { ref, defineComponent } from 'vue';
+import { ref, defineComponent, toRef } from 'vue';
 
 defineComponent({
     name: 'LeftMenu'
 });
-const activeIndex = ref('schedule');
+const props = defineProps({
+    activeIndex: {
+        type: String,
+        required: true
+    }
+});
+const activeIndex = toRef(props,'activeIndex');
 
 const handleSelect = (index: string) => {
     activeIndex.value = index;
     console.log(activeIndex.value);
-    console.log('select');
 };
 </script>
 
 <template>
-    <el-menu class="LeftMenu" :default-active="activeIndex" @select="handleSelect" router>
+    <el-menu class="LeftMenu" :default-active="activeIndex" @select="handleSelect(activeIndex)" router>
         <el-menu-item index="schedule" class="item">
             <el-icon><Calendar /></el-icon>
             <span>日程</span>

@@ -9,6 +9,8 @@
     npm install vue @types/vue --save-dev
     npm install @element-plus/icons-vue
     npm install vue-router@4
+    npm install vuex 
+    npm install axios
 ```
 
 ##### 启动

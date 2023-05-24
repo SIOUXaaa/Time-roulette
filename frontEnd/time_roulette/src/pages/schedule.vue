@@ -5,7 +5,7 @@ import TopBar from '../components/TopBar.vue';
 import LeftMenu from '../components/LeftMenu.vue';
 import Card from '../components/Card.vue';
 import CardDetails from '../components/cardDetails.vue';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 
 export type cardInfo = {
     id: number;
@@ -13,44 +13,73 @@ export type cardInfo = {
     time: string;
     address: string;
     contents: string;
+    [key: string]: any; // 添加字符串类型的索引签名
 };
-let list: cardInfo[] = reactive([
-    {
-        id: 1,
-        title: 'a',
-        time: '2023-1-2 0:0:0',
-        address: '南区大饭店',
-        contents:
-            '今天要吃饭金天要吃饭今天要吃饭今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
-    },
-    {
-        id: 2,
-        title: 'a',
-        time: '2023-1-15 0:0:0',
-        address: '南区大饭店',
-        contents:
-            '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
-    },
-    {
-        id: 3,
-        title: 'a',
-        time: '2023-1-4 0:0:0',
-        address: '南区大饭店',
-        contents:
-            '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
-    }
-    // { id: 15, title: 'a', time: '2023.1.8', address: '南区大饭店' },
-    // { id: 5, title: 'a', time: '2023.1.6', address: '南区大饭店' },
-    // { id: 6, title: 'a', time: '2023.1.7', address: '南区大饭店' },
-    // { id: 7, title: 'a', time: '2023.1.8', address: '南区大饭店' },
-    // { id: 8, title: 'a', time: '2023.1.9', address: '南区大饭店' },
-    // { id: 9, title: 'a', time: '2023.1.10', address: '南区大饭店' },
-    // { id: 10, title: 'a', time: '2023.1.11', address: '南区大饭店' },
-    // { id: 11, title: 'a', time: '2023.1.15', address: '南区大饭店' },
-    // { id: 12, title: 'a', time: '2023.1.16', address: '南区大饭店' },
-    // { id: 13, title: 'a', time: '2023.1.11', address: '南区大饭店' },
-    // { id: 14, title: 'a', time: '2023.1.12', address: '南区大饭店' }
-]);
+const listRef = reactive({
+    list: [
+        {
+            id: 1,
+            title: 'a',
+            time: '2023-1-2 0:0:0',
+            address: '南区大饭店',
+            contents:
+                '今天要吃饭金天要吃饭今天要吃饭今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
+        },
+        {
+            id: 2,
+            title: 'a',
+            time: '2023-1-15 0:0:0',
+            address: '南区大饭店',
+            contents:
+                '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
+        },
+        {
+            id: 3,
+            title: 'a',
+            time: '2023-1-4 0:0:0',
+            address: '南区大饭店',
+            contents:
+                '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
+        }
+    ]
+});
+// let list: cardInfo[] = reactive([
+//     {
+//         id: 1,
+//         title: 'a',
+//         time: '2023-1-2 0:0:0',
+//         address: '南区大饭店',
+//         contents:
+//             '今天要吃饭金天要吃饭今天要吃饭今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
+//     },
+//     {
+//         id: 2,
+//         title: 'a',
+//         time: '2023-1-15 0:0:0',
+//         address: '南区大饭店',
+//         contents:
+//             '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
+//     },
+//     {
+//         id: 3,
+//         title: 'a',
+//         time: '2023-1-4 0:0:0',
+//         address: '南区大饭店',
+//         contents:
+//             '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
+//     }
+//     // { id: 15, title: 'a', time: '2023.1.8', address: '南区大饭店' },
+//     // { id: 5, title: 'a', time: '2023.1.6', address: '南区大饭店' },
+//     // { id: 6, title: 'a', time: '2023.1.7', address: '南区大饭店' },
+//     // { id: 7, title: 'a', time: '2023.1.8', address: '南区大饭店' },
+//     // { id: 8, title: 'a', time: '2023.1.9', address: '南区大饭店' },
+//     // { id: 9, title: 'a', time: '2023.1.10', address: '南区大饭店' },
+//     // { id: 10, title: 'a', time: '2023.1.11', address: '南区大饭店' },
+//     // { id: 11, title: 'a', time: '2023.1.15', address: '南区大饭店' },
+//     // { id: 12, title: 'a', time: '2023.1.16', address: '南区大饭店' },
+//     // { id: 13, title: 'a', time: '2023.1.11', address: '南区大饭店' },
+//     // { id: 14, title: 'a', time: '2023.1.12', address: '南区大饭店' }
+// ]);
 
 const cardDefault: cardInfo = {
     id: -1,
@@ -66,7 +95,7 @@ const showCard = ref(false);
 const cardValue = ref(cardDefault);
 
 const sortById = () => {
-    list = list.sort((a, b) => a.id - b.id);
+    listRef.list = listRef.list.sort((a, b) => a.id - b.id);
 };
 
 const sort = () => {
@@ -78,7 +107,7 @@ const sort = () => {
 };
 
 const sortByDate = () => {
-    list = list.sort((a, b) => {
+    listRef.list = listRef.list.sort((a, b) => {
         const dateA = new Date(a.time);
         const dateB = new Date(b.time);
         return dateA.getTime() - dateB.getTime();
@@ -91,22 +120,61 @@ const handleClose = () => {
 
 const deleteCard = (card: cardInfo) => {
     console.log('delete card:' + card.id);
-    const index = list.findIndex(item => item === card);
+    const index = listRef.list.findIndex(item => item === card);
     if (index !== -1) {
-        list.splice(index, 1);
+        listRef.list.splice(index, 1);
     }
 };
 
+const deleteAll = () => {
+    ElMessageBox.confirm('即将清除所有日程，是否继续？', '警告', {
+        confirmButtonText: '是',
+        cancelButtonText: '否',
+        type: 'warning'
+    })
+        .then(() => {
+            ElMessage({
+                type: 'success',
+                message: '已清除所有日程'
+            });
+            listRef.list.splice(0, listRef.list.length);
+            // for (let item of listRef.list) {
+            //     deleteCard(item);
+            // }
+        })
+        .catch(() => {
+            ElMessage({
+                type: 'info',
+                message: '已取消'
+            });
+        });
+};
+
 const updateCard = (card: cardInfo) => {
-    console.log(card);
-    if (card === cardDefault) {
+    // listRef.list.push(card);
+    let same = true;
+    // const keys = Object.keys(cardDefault);
+    for (let key of Object.keys(cardDefault)) {
+        if (card[key] !== cardDefault[key]) {
+            same = false;
+            break;
+        }
+    }
+    if (same) {
         ElMessage({
             message: '你也妹输入啊，完成啥...',
             type: 'warning'
         });
+        handleClose();
+        return;
     }
-    const index = list.findIndex(item => item.id === card.id);
-    list[index] = card;
+    const index = listRef.list.findIndex(item => item.id === card.id);
+    // console.log(index);
+    listRef.list.splice(index, 1, card);
+    // console.log(listRef.list);
+    // listRef.list.splice(index, 0, card);
+    // console.log(listRef.list);
+    // listRef.list[index] = card;
     handleClose();
 };
 
@@ -142,7 +210,7 @@ sortById();
                             <el-button type="primary" @click="addCard">添加</el-button>
                         </el-col>
                         <el-col :span="12">
-                            <el-button type="primary">删除</el-button>
+                            <el-button type="primary" @click="deleteAll">删除</el-button>
                         </el-col>
                     </el-row>
                     <el-row justify="center" align="top">
@@ -155,13 +223,13 @@ sortById();
                     </el-row>
                 </el-row>
 
-                <LeftMenu class="LeftMenu" />
+                <LeftMenu class="LeftMenu"  :activeIndex="'schedule'" />
             </el-col>
             <el-col :span="18" :flex="1" class="right">
                 <el-scrollbar>
                     <el-alert
                         class="alertNull"
-                        v-show="list.length === 0"
+                        v-show="listRef.list.length === 0"
                         title="还没有日程捏，速速创建"
                         type="warning"
                         show-icon
@@ -171,7 +239,7 @@ sortById();
                         <!-- <el-col :span="6" v-for="{ id, time } in list" :key="id" class="schedule"> -->
                         <transition-group name="el-zoom-in-center">
                             <Card
-                                v-for="item in list"
+                                v-for="item in listRef.list"
                                 :key="item.id"
                                 class="schedule"
                                 :card="item"

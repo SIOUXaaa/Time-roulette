@@ -27,28 +27,33 @@ const cardDefault: cardInfo = {
     contents: ''
 };
 const time = ref('');
-const card = toRef(props, 'card');
-const tempCard = ref(cardDefault);
+// const card = toRef(props, 'card');
+let tempCard = ref(cardDefault);
+// const tempCardRef = ref(tempCard);
 
 const visible = toRef(props, 'visible');
 
 const handleEdit = () => {
+    // tempCardRef.value.time = time.value;
+    // console.log(time.value.toString());
+    // card.value = tempCard.value;
     tempCard.value.time = time.value;
-    console.log(time.value.toString());
-    card.value = tempCard.value;
-    props.updateCard(card.value);
+    props.updateCard(tempCard.value);
 };
 
 const handleCancel = () => {
-    card.value = cardDefault;
+    // card.value = cardDefault;
+    tempCard.value = cardDefault;
 };
 
 watch(
     () => props.visible,
     newValue => {
         if (newValue) {
-            console.log(card.value);
-            tempCard.value = card.value;
+            tempCard.value = JSON.parse(JSON.stringify(props.card));
+            // console.log(tempCard);
+        } else {
+            tempCard.value = cardDefault;
         }
     }
 );
@@ -67,7 +72,7 @@ watch(
             </el-form-item>
             <el-form-item label="内容">
                 <el-input
-                    type="text"
+                    type="textarea"
                     v-model="tempCard.contents"
                     placeholder="输入日程内容谢谢喵"
                     clearable
