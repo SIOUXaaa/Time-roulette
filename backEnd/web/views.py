@@ -37,11 +37,11 @@ class ScheduleSerializers(serializers.ModelSerializer):
         return instance
 
     class Meta:
-        model = Memo
+        model = Schedule
         fields = ['schedule_id', 'user', 'title', 'contents', 'address', 'time']
 
 
-class Memo(serializers.ModelSerializer):
+class MemoSerializers(serializers.ModelSerializer):
     time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
 
     def update(self, instance, validated_data):
@@ -56,24 +56,6 @@ class Memo(serializers.ModelSerializer):
     class Meta:
         model = Memo
         fields = ['memo_id', 'user', 'contents', 'contents', 'done', 'reminded', 'time']
-
-
-class UserView(APIView):
-    def get(self, req, pk):
-        user_list = User.objects.filter(pk=pk)
-        serializer = UserSerializers(instance=user_list, many=True)
-        return Response(serializer.data)
-
-    def post(self, req):
-        username = req.data.get('username')
-        password = req.data.get('password')
-        serializer = UserSerializers(data=req.data)
-
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors)
 
 
 @api_view(['POST'])
@@ -103,7 +85,7 @@ def register(req):
 
 @api_view(['GET'])
 def get_schedule(req):
-    schedules = Memo.objects.all()
+    schedules = Schedule.objects.all()
     # print(schedules.values())
     serializer = ScheduleSerializers(schedules, many=True)
     return Response(serializer.data)
@@ -128,7 +110,7 @@ def update_schedule(req, schedule_id):
 def get_memo(req):
     memos = Memo.objects.all()
     # print(memos.values())
-    serializer = ScheduleSerializers(memos, many=True)
+    serializer = MemoSerializers(memos, many=True)
     return Response(serializer.data)
 
 
@@ -139,7 +121,7 @@ def update_memo(req, memo_id):
     except Memo.DoesNotExist:
         return Response(status=404)
 
-    serializer = ScheduleSerializers(memo, data=req.data)
+    serializer = MemoSerializers(memo, data=req.data)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)

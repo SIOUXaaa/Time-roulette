@@ -126,7 +126,7 @@ class Memo(models.Model):
     memo_id = models.AutoField(primary_key=True)
     user = models.ForeignKey('User', models.DO_NOTHING)
     contents = models.TextField(blank=True, null=True)
-    done = models.IntegerField()
+    done = models.BooleanField()
     reminded = models.IntegerField()
     time = models.DateTimeField(blank=True, null=True)
 

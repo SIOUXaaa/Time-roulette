@@ -19,7 +19,6 @@ from web import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('user/<int:pk>/', views.UserView.as_view()),
     path('user/login/', views.login),
     path('user/register/', views.register),
     path('schedule/get/', views.get_schedule),
