@@ -124,8 +124,10 @@ const handleEdit = () => {
 }
 
 .box-card {
-    max-width: 250px;
-    max-height: 400px;
+    width: 250px;
+    /* height: 300px; */
+    height: 350px;
+    /* max-height: 400px; */
     box-shadow: 0 0 8px #cdd0d6;
     background-color: #ffffff;
     color: #606266;

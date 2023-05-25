@@ -75,6 +75,7 @@ watch(
                     type="textarea"
                     v-model="tempCard.contents"
                     placeholder="输入日程内容谢谢喵"
+                    :autosize="{minRows:2, maxRows: 5}"
                     clearable
                 />
             </el-form-item>

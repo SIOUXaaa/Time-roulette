@@ -4,6 +4,7 @@ import { reactive, computed, ref } from 'vue';
 import TopBar from '../components/TopBar.vue';
 import LeftMenu from '../components/LeftMenu.vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import MemoDetails from '../components/MemoDetails.vue';
 
 export type memoInfo = {
     id: number;
@@ -51,6 +52,8 @@ const listDone = reactive({
 
 
 const activeCollapse = ref('unfinished');
+const memoValue = ref(memoDefault);
+const showMemo = ref(false)
 
 const updateDone = (memo: memoInfo) => {
     console.log(memo);
@@ -62,11 +65,16 @@ const updateDone = (memo: memoInfo) => {
 const updateMemo = (memo: memoInfo) => {};
 
 const addMemo = () => {
+    showMemo.value = true;
     console.log(listRef.list);
     console.log(listDone.list);
 };
 
-const clearDone = () => {};
+const clearDone = () => { };
+
+const handleClose = () => {
+    showMemo.value = false;
+}
 </script>
 
 <template>
@@ -75,6 +83,12 @@ const clearDone = () => {};
             <TopBar />
         </div>
         <el-row class="main">
+            <MemoDetails 
+                :memo="memoValue"
+                :visible="showMemo"
+                :update-memo="addMemo"
+                :before-close="handleClose"
+            />
             <el-col :span="4" class="left">
                 <el-row class="control" justify="space-evenly" align="middle">
                     <el-row :gutter="20">

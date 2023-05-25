@@ -11,6 +11,8 @@
     npm install vue-router@4
     npm install vuex 
     npm install axios
+    npm install js-md5 --save
+    npm i --save jsencrypt
 ```
 
 ##### 启动

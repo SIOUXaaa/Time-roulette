@@ -21,8 +21,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/login/', views.login),
     path('user/register/', views.register),
-    path('schedule/get/', views.get_schedule),
+    path('schedule/get/<int:user_id>', views.get_schedule),
     path('schedule/update/<int:schedule_id>', views.update_schedule),
-    path('memo/get/', views.get_memo),
+    path('schedule/delete/<int:schedule_id>', views.delete_schedule),
+    path('memo/get/<int:user_id>', views.get_memo),
     path('memo/update/<int:memo_id>', views.update_memo),
+    path('memo/delete/<int:memo_id>', views.delete_memo)
 ]

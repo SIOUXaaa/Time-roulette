@@ -8,7 +8,7 @@ from .models import *
 
 # Create your views here.
 
-class UserSerializers(serializers.Serializer):
+class UserSerializers(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     name = serializers.CharField(max_length=255)
     password = serializers.CharField(max_length=255)  # Field renamed because it was a Python reserved word.
@@ -23,6 +23,10 @@ class UserSerializers(serializers.Serializer):
             user.avatar = avatar
         user.save()
         return user
+
+    class Meta:
+        model = User
+        fields = ['id', 'name', 'password', 'avatar']
 
 
 class ScheduleSerializers(serializers.ModelSerializer):
@@ -64,11 +68,20 @@ def login(req):
     password = req.data.get('password')
     try:
         user = User.objects.get(name=username)
-        serializer = UserSerializers(instance=user, many=False)
+        # serializer = UserSerializers(instance=user, many=False)
         if user.password == password:
-            return Response(serializer.data)
+            data = {
+                'id': user.id,
+                'name': user.name,
+                # 'avatar': user.avatar,
+                'login_success': True
+            }
         else:
-            return Response({'msg': "该用户不存在"})
+            data = {
+                'msg': '密码错误',
+                'login_success': False
+            }
+        return Response(data)
     except User.DoesNotExist:
         return Response('用户不存在')
 
@@ -84,8 +97,8 @@ def register(req):
 
 
 @api_view(['GET'])
-def get_schedule(req):
-    schedules = Schedule.objects.all()
+def get_schedule(req, user_id):
+    schedules = Schedule.objects.filter(user=user_id)
     # print(schedules.values())
     serializer = ScheduleSerializers(schedules, many=True)
     return Response(serializer.data)
@@ -106,9 +119,19 @@ def update_schedule(req, schedule_id):
         return Response(serializer.errors, status=400)
 
 
+@api_view(['DELETE'])
+def delete_schedule(req, schedule_id):
+    try:
+        schedule = Schedule.objects.get(pk=schedule_id)
+        schedule.delete()
+        return Response({"msg": "删除成功"})
+    except Schedule.DoesNotExist:
+        return Response(status=404)
+
+
 @api_view(['GET'])
-def get_memo(req):
-    memos = Memo.objects.all()
+def get_memo(req, user_id):
+    memos = Memo.objects.filter(user=user_id)
     # print(memos.values())
     serializer = MemoSerializers(memos, many=True)
     return Response(serializer.data)
@@ -127,3 +150,13 @@ def update_memo(req, memo_id):
         return Response(serializer.data)
     else:
         return Response(serializer.errors, status=400)
+
+
+@api_view(['DELETE'])
+def delete_memo(req, memo_id):
+    try:
+        memo = Memo.objects.get(pk=memo_id)
+        memo.delete()
+        return Response({"msg": "删除成功"})
+    except Memo.DoesNotExist:
+        return Response(status=404)

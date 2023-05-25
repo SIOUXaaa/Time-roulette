@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import '../style.css';
-import { reactive, computed, ref } from 'vue';
+import { reactive, computed, ref, onMounted } from 'vue';
 import TopBar from '../components/TopBar.vue';
 import LeftMenu from '../components/LeftMenu.vue';
 import Card from '../components/Card.vue';
 import CardDetails from '../components/cardDetails.vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { mapActions, useStore, mapState } from 'vuex';
+import axios from 'axios';
 
 export type cardInfo = {
     id: number;
@@ -15,34 +17,114 @@ export type cardInfo = {
     contents: string;
     [key: string]: any; // 添加字符串类型的索引签名
 };
-const listRef = reactive({
-    list: [
-        {
-            id: 1,
-            title: 'a',
-            time: '2023-1-2 0:0:0',
-            address: '南区大饭店',
-            contents:
-                '今天要吃饭金天要吃饭今天要吃饭今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
-        },
-        {
-            id: 2,
-            title: 'a',
-            time: '2023-1-15 0:0:0',
-            address: '南区大饭店',
-            contents:
-                '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
-        },
-        {
-            id: 3,
-            title: 'a',
-            time: '2023-1-4 0:0:0',
-            address: '南区大饭店',
-            contents:
-                '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
-        }
-    ]
-});
+// const listRef = reactive({
+//     list: [
+//         {
+//             id: 1,
+//             title: 'a',
+//             time: '2023-1-2 0:0:0',
+//             address: '南区大饭店',
+//             contents:
+//                 '今天要吃饭金天要吃饭今天要吃饭今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
+//         },
+//         {
+//             id: 2,
+//             title: 'a',
+//             time: '2023-1-15 0:0:0',
+//             address: '南区大饭店',
+//             contents:
+//                 '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
+//         },
+//         {
+//             id: 3,
+//             title: 'a',
+//             time: '2023-1-4 0:0:0',
+//             address: '南区大饭店',
+//             contents:
+//                 '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
+//         },
+//         {
+//             id: 3,
+//             title: 'a',
+//             time: '2023-1-4 0:0:0',
+//             address: '南区大饭店',
+//             contents:
+//                 '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
+//         },
+//         {
+//             id: 3,
+//             title: 'a',
+//             time: '2023-1-4 0:0:0',
+//             address: '南区大饭店',
+//             contents:
+//                 '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
+//         },
+//         {
+//             id: 3,
+//             title: 'a',
+//             time: '2023-1-4 0:0:0',
+//             address: '南区大饭店',
+//             contents:
+//                 '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
+//         },
+//         {
+//             id: 3,
+//             title: 'a',
+//             time: '2023-1-4 0:0:0',
+//             address: '南区大饭店',
+//             contents:
+//                 '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
+//         },
+//         {
+//             id: 3,
+//             title: 'a',
+//             time: '2023-1-4 0:0:0',
+//             address: '南区大饭店',
+//             contents:
+//                 '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
+//         },
+//         {
+//             id: 3,
+//             title: 'a',
+//             time: '2023-1-4 0:0:0',
+//             address: '南区大饭店',
+//             contents:
+//                 '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
+//         },
+//         {
+//             id: 3,
+//             title: 'a',
+//             time: '2023-1-4 0:0:0',
+//             address: '南区大饭店',
+//             contents:
+//                 '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
+//         },
+//         {
+//             id: 3,
+//             title: 'a',
+//             time: '2023-1-4 0:0:0',
+//             address: '南区大饭店',
+//             contents:
+//                 '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
+//         },
+//         {
+//             id: 3,
+//             title: 'a',
+//             time: '2023-1-4 0:0:0',
+//             address: '南区大饭店',
+//             contents:
+//                 '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
+//         },
+//         {
+//             id: 3,
+//             title: 'a',
+//             time: '2023-1-4 0:0:0',
+//             address: '南区大饭店',
+//             contents:
+//                 '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
+//         }
+//     ]
+// });
 // let list: cardInfo[] = reactive([
 //     {
 //         id: 1,
@@ -89,10 +171,38 @@ const cardDefault: cardInfo = {
     contents: ''
 };
 
+const store = useStore();
+const loginSuccess = mapState(['login_success']);
 const sortMode = ['按默认排序', '按时间排序'];
 const sortOpe = ref('按默认排序');
 const showCard = ref(false);
 const cardValue = ref(cardDefault);
+let list: cardInfo[] = [];
+const listRef = reactive({
+    list: list
+})
+onMounted(() => {
+    axios
+        .get('schedule/get/' + store.state.id)
+        .then(response => {
+            // console.log(response.data);
+            list = response.data.map((item: any) => {
+                return {
+                    id: item.schedule_id,
+                    title: item.title,
+                    time: item.time,
+                    address: item.address,
+                    contents: item.contents
+                };
+            });
+            listRef.list = list;
+            console.log(list);
+            console.log(listRef.list);
+        })
+        .catch(error => {
+            ElMessage.error(error);
+        });
+});
 
 const sortById = () => {
     listRef.list = listRef.list.sort((a, b) => a.id - b.id);
@@ -223,34 +333,36 @@ sortById();
                     </el-row>
                 </el-row>
 
-                <LeftMenu class="LeftMenu"  :activeIndex="'schedule'" />
+                <LeftMenu class="LeftMenu" :activeIndex="'schedule'" />
             </el-col>
             <el-col :span="18" :flex="1" class="right">
-                <el-scrollbar>
-                    <el-alert
-                        class="alertNull"
-                        v-show="listRef.list.length === 0"
-                        title="还没有日程捏，速速创建"
-                        type="warning"
-                        show-icon
-                        center
-                    />
-                    <el-row class="schedule-items">
-                        <!-- <el-col :span="6" v-for="{ id, time } in list" :key="id" class="schedule"> -->
-                        <transition-group name="el-zoom-in-center">
-                            <Card
-                                v-for="item in listRef.list"
-                                :key="item.id"
-                                class="schedule"
-                                :card="item"
-                                :deleteCard="deleteCard"
-                                :editCard="editCard"
-                            />
-                        </transition-group>
+                <div class="mask">
+                    <el-scrollbar>
+                        <el-alert
+                            class="alertNull"
+                            v-show="listRef.list.length === 0"
+                            title="还没有日程捏，速速创建"
+                            type="warning"
+                            show-icon
+                            center
+                        />
+                        <el-row class="schedule-items">
+                            <!-- <el-col :span="6" v-for="{ id, time } in list" :key="id" class="schedule"> -->
+                            <transition-group name="el-zoom-in-center">
+                                <Card
+                                    v-for="item in listRef.list"
+                                    :key="item.id"
+                                    class="schedule"
+                                    :card="item"
+                                    :deleteCard="deleteCard"
+                                    :editCard="editCard"
+                                />
+                            </transition-group>
 
-                        <!-- </el-col> -->
-                    </el-row>
-                </el-scrollbar>
+                            <!-- </el-col> -->
+                        </el-row>
+                    </el-scrollbar>
+                </div>
             </el-col>
         </el-row>
     </div>
@@ -286,12 +398,20 @@ sortById();
     margin-top: 10px;
     margin-left: 50px;
     margin-bottom: 10px;
+    padding-bottom: 10px;
     box-shadow: 0 0 8px #cdd0d6;
     border-radius: 15px;
     display: flex;
     position: relative;
     text-align: center;
     justify-content: center;
+}
+
+.mask {
+    width: 100%;
+    max-height: calc(100vh - 80px);
+    padding-bottom: 15px;
+    -webkit-mask-image: linear-gradient(rgb(227, 227, 227), 90%, transparent);
 }
 .control {
     min-width: 125px;

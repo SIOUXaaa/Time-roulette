@@ -3,7 +3,7 @@ import LoginDiv from '../components/login.vue'
 </script>
 
 <template>
-  <LoginDiv class="login"/>
+  <LoginDiv class="login" activeName="first"/>
 </template>
 
 <style scoped>

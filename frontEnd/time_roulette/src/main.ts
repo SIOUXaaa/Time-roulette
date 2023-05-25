@@ -7,6 +7,7 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import router from './router'
 import { ElCollapseTransition } from 'element-plus'
 import axios from 'axios';
+import store from './store'
 
 
 const app = createApp(App)
@@ -16,6 +17,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 app.component(ElCollapseTransition.name, ElCollapseTransition)
 app.use(ElementPlus)
 app.use(router)
+app.use(store)
 app.mount('#app')
 
 axios.defaults.baseURL = 'http://127.0.0.1:8000'

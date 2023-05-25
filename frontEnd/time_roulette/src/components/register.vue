@@ -2,6 +2,9 @@
 import { FormInstance, ElMessage } from 'element-plus';
 import { ref, onMounted, defineComponent } from 'vue';
 import { useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
+import { mapActions, useStore, mapState } from 'vuex';
+import router from '../router';
 
 defineComponent({
     name: 'registerDiv'
@@ -35,12 +38,26 @@ const rules = ref({
         }
     ]
 });
+
+const store = useStore();
 const register = ref(null);
 const handleRegister = () => {
     if (register.value) {
         (register.value as FormInstance).validate(valid => {
             if (!valid) {
                 ElMessage.error('两次输入的密码不一致');
+            } else {
+                store
+                    .dispatch('register', {
+                        name: registerForm.value.account,
+                        password: registerForm.value.password
+                    })
+                    .then(() => {
+                        ElMessage.success('注册成功, 点击登录进行登录吧');
+                    })
+                    .catch(error => {
+                        ElMessage.error(error.message);
+                    });
             }
         });
     }

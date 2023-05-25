@@ -14,7 +14,7 @@ CREATE TABLE user
 
 CREATE TABLE schedule
 (
-    schedule_id int(11) primary key NOT NULL AUTO_INCREMENT,
+    schedule_id int(11) primary key AUTO_INCREMENT,
     user_id     int(11)             NOT NULL,
     title       varchar(1024)       NULL DEFAULT NULL,
     contents    TEXT                NULL DEFAULT NULL,
@@ -65,7 +65,7 @@ CREATE TRIGGER add_schedule
     ON schedule
     FOR EACH ROW
 BEGIN
-    SET NEW.schedule_id = (SELECT COUNT(*) + 1 FROM schedule);
+    SET NEW.schedule_id = (SELECT Max(schedule_id) + 1 FROM schedule);
 END;
 
 CREATE TRIGGER add_memo

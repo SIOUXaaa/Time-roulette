@@ -1,16 +1,31 @@
 <script lang="ts" setup>
+import JSEncrypt from 'jsencrypt';
 import { ElMessage, FormInstance } from 'element-plus';
-import { onMounted, reactive, ref, defineComponent } from 'vue';
+import { onMounted, reactive, ref, defineComponent, toRef } from 'vue';
 import registerDiv from './register.vue';
 import { useRouter } from 'vue-router';
+import { mapActions, useStore, mapState } from 'vuex';
 
 defineComponent({
     name: 'loginDiv'
 });
 
+const props = defineProps({
+    activeName: {
+        type: String,
+        required: true
+    }
+});
 const router = useRouter();
+const store = useStore();
+// const storeState = mapState(['id', 'username', 'login_success']);
+// const state = {};
+// Object.keys(storeState).forEach(Key => {
+//     const fn = storeState[Key].bind({ $store: store });
+//     state[Key] = computed(fn);
+// });
 
-const activeName = ref('first');
+const activeName = toRef(props, 'activeName');
 const loginForm = ref({
     account: '',
     password: ''
@@ -28,11 +43,22 @@ const rules = ref({
 
 const handleClick = () => {};
 const handleLogin = () => {
-    if (loginForm.value.account === 'test' && loginForm.value.password === '123456') {
-        router.push('/schedule');
-    } else {
-        ElMessage.error('用户密码错误');
-    }
+    store
+        .dispatch('login', {
+            username: loginForm.value.account,
+            password: loginForm.value.password
+        })
+        .then(() => {
+            console.log(store.state.login_success);
+            if (store.state.login_success) {
+                console.log(111);
+                router.push('/schedule');
+            }
+        })
+        .catch(error => {
+            console.log(error);
+            ElMessage.error(error.message);
+        });
 };
 const login = ref(null);
 const handleReset = () => {
@@ -126,6 +152,7 @@ const handleReset = () => {
 
 p {
     font-size: 20px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji';
 }
 </style>
