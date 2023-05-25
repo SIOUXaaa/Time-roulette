@@ -8,6 +8,7 @@ import CardDetails from '../components/cardDetails.vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { mapActions, useStore, mapState } from 'vuex';
 import axios from 'axios';
+import { ca } from 'element-plus/es/locale';
 
 export type cardInfo = {
     id: number;
@@ -180,8 +181,9 @@ const cardValue = ref(cardDefault);
 let list: cardInfo[] = [];
 const listRef = reactive({
     list: list
-})
-onMounted(() => {
+});
+
+const getSchedule = () => {
     axios
         .get('schedule/get/' + store.state.id)
         .then(response => {
@@ -202,6 +204,10 @@ onMounted(() => {
         .catch(error => {
             ElMessage.error(error);
         });
+};
+
+onMounted(() => {
+    getSchedule();
 });
 
 const sortById = () => {
@@ -230,10 +236,17 @@ const handleClose = () => {
 
 const deleteCard = (card: cardInfo) => {
     console.log('delete card:' + card.id);
-    const index = listRef.list.findIndex(item => item === card);
-    if (index !== -1) {
-        listRef.list.splice(index, 1);
-    }
+    axios
+        .delete('schedule/delete/' + card.id)
+        .then(() => {
+            const index = listRef.list.findIndex(item => item === card);
+            if (index !== -1) {
+                listRef.list.splice(index, 1);
+            }
+        })
+        .catch(error => {
+            ElMessage.error(error.message);
+        });
 };
 
 const deleteAll = () => {
@@ -247,7 +260,14 @@ const deleteAll = () => {
                 type: 'success',
                 message: '已清除所有日程'
             });
-            listRef.list.splice(0, listRef.list.length);
+            axios
+                .delete('schedule/deleteAll/' + store.state.id)
+                .then(() => {
+                    listRef.list.splice(0, listRef.list.length);
+                })
+                .catch(error => {
+                    ElMessage.error(error.message);
+                });
             // for (let item of listRef.list) {
             //     deleteCard(item);
             // }
@@ -278,13 +298,35 @@ const updateCard = (card: cardInfo) => {
         handleClose();
         return;
     }
-    const index = listRef.list.findIndex(item => item.id === card.id);
-    // console.log(index);
-    listRef.list.splice(index, 1, card);
-    // console.log(listRef.list);
-    // listRef.list.splice(index, 0, card);
-    // console.log(listRef.list);
-    // listRef.list[index] = card;
+    const data = {
+        user: store.state.id,
+        title: card.title,
+        contents: card.contents,
+        address: card.address,
+        time: card.time
+    };
+    console.log(data);
+    if (card.id === -1) {
+        axios
+            .post('schedule/add/', data)
+            .then((response) => {
+                card.id = response.data.schedule_id;
+                listRef.list.splice(-1, 0, card);
+            })
+            .catch(error => {
+                ElMessage.error(error);
+            });
+    } else {
+        axios
+            .put('schedule/update/' + card.id, data)
+            .then(() => {
+                const index = listRef.list.findIndex(item => item.id === card.id);
+                listRef.list.splice(index, 1, card);
+            })
+            .catch(error => {
+                ElMessage.error(error);
+            });
+    }
     handleClose();
 };
 

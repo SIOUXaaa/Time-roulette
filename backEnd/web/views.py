@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework import serializers
@@ -30,6 +30,7 @@ class UserSerializers(serializers.ModelSerializer):
 
 
 class ScheduleSerializers(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
 
     def update(self, instance, validated_data):
@@ -47,6 +48,7 @@ class ScheduleSerializers(serializers.ModelSerializer):
 
 class MemoSerializers(serializers.ModelSerializer):
     time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
     def update(self, instance, validated_data):
         instance.contents = validated_data.get('contents', instance.contents)
@@ -109,12 +111,25 @@ def update_schedule(req, schedule_id):
     try:
         schedule = Schedule.objects.get(pk=schedule_id)
     except Schedule.DoesNotExist:
-        return Response(status=404)
+        return Response({'msg': 'not found'}, status=404)
 
     serializer = ScheduleSerializers(schedule, data=req.data)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)
+    else:
+        return Response(serializer.errors, status=400)
+
+
+@api_view(['POST'])
+def add_schedule(req):
+    user_id = req.data.get('user')
+    user = User.objects.get(id=user_id)
+
+    serializer = ScheduleSerializers(data=req.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=201)
     else:
         return Response(serializer.errors, status=400)
 
@@ -129,12 +144,31 @@ def delete_schedule(req, schedule_id):
         return Response(status=404)
 
 
+@api_view(['DELETE'])
+def delete_all_schedule(req, user_id):
+    try:
+        schedules = Schedule.objects.filter(user=user_id)
+        schedules.delete()
+        return Response({"msg": "删除成功"}, status=204)
+    except Schedule.DoesNotExist:
+        return Response(status=404)
+
+
 @api_view(['GET'])
 def get_memo(req, user_id):
     memos = Memo.objects.filter(user=user_id)
     # print(memos.values())
     serializer = MemoSerializers(memos, many=True)
     return Response(serializer.data)
+
+
+@api_view(['POST'])
+def add_memo(req):
+    serializer = MemoSerializers(data=req.data)
+    if serializer.is_valid():
+        return Response(serializer.data)
+    else:
+        return Response(serializer.errors)
 
 
 @api_view(['PUT'])
@@ -158,5 +192,15 @@ def delete_memo(req, memo_id):
         memo = Memo.objects.get(pk=memo_id)
         memo.delete()
         return Response({"msg": "删除成功"})
+    except Memo.DoesNotExist:
+        return Response(status=404)
+
+
+@api_view(['DELETE'])
+def delete_all_memo(req, user_id):
+    try:
+        memos = Memo.objects.filter(user=user_id)
+        memos.delete()
+        return Response({"msg": "删除成功"}, status=204)
     except Memo.DoesNotExist:
         return Response(status=404)
