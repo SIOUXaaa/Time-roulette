@@ -8,7 +8,6 @@ import CardDetails from '../components/cardDetails.vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { mapActions, useStore, mapState } from 'vuex';
 import axios from 'axios';
-import { ca } from 'element-plus/es/locale';
 
 export type cardInfo = {
     id: number;
@@ -18,151 +17,6 @@ export type cardInfo = {
     contents: string;
     [key: string]: any; // 添加字符串类型的索引签名
 };
-// const listRef = reactive({
-//     list: [
-//         {
-//             id: 1,
-//             title: 'a',
-//             time: '2023-1-2 0:0:0',
-//             address: '南区大饭店',
-//             contents:
-//                 '今天要吃饭金天要吃饭今天要吃饭今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
-//         },
-//         {
-//             id: 2,
-//             title: 'a',
-//             time: '2023-1-15 0:0:0',
-//             address: '南区大饭店',
-//             contents:
-//                 '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
-//         },
-//         {
-//             id: 3,
-//             title: 'a',
-//             time: '2023-1-4 0:0:0',
-//             address: '南区大饭店',
-//             contents:
-//                 '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
-//         },
-//         {
-//             id: 3,
-//             title: 'a',
-//             time: '2023-1-4 0:0:0',
-//             address: '南区大饭店',
-//             contents:
-//                 '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
-//         },
-//         {
-//             id: 3,
-//             title: 'a',
-//             time: '2023-1-4 0:0:0',
-//             address: '南区大饭店',
-//             contents:
-//                 '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
-//         },
-//         {
-//             id: 3,
-//             title: 'a',
-//             time: '2023-1-4 0:0:0',
-//             address: '南区大饭店',
-//             contents:
-//                 '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
-//         },
-//         {
-//             id: 3,
-//             title: 'a',
-//             time: '2023-1-4 0:0:0',
-//             address: '南区大饭店',
-//             contents:
-//                 '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
-//         },
-//         {
-//             id: 3,
-//             title: 'a',
-//             time: '2023-1-4 0:0:0',
-//             address: '南区大饭店',
-//             contents:
-//                 '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
-//         },
-//         {
-//             id: 3,
-//             title: 'a',
-//             time: '2023-1-4 0:0:0',
-//             address: '南区大饭店',
-//             contents:
-//                 '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
-//         },
-//         {
-//             id: 3,
-//             title: 'a',
-//             time: '2023-1-4 0:0:0',
-//             address: '南区大饭店',
-//             contents:
-//                 '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
-//         },
-//         {
-//             id: 3,
-//             title: 'a',
-//             time: '2023-1-4 0:0:0',
-//             address: '南区大饭店',
-//             contents:
-//                 '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
-//         },
-//         {
-//             id: 3,
-//             title: 'a',
-//             time: '2023-1-4 0:0:0',
-//             address: '南区大饭店',
-//             contents:
-//                 '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
-//         },
-//         {
-//             id: 3,
-//             title: 'a',
-//             time: '2023-1-4 0:0:0',
-//             address: '南区大饭店',
-//             contents:
-//                 '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
-//         }
-//     ]
-// });
-// let list: cardInfo[] = reactive([
-//     {
-//         id: 1,
-//         title: 'a',
-//         time: '2023-1-2 0:0:0',
-//         address: '南区大饭店',
-//         contents:
-//             '今天要吃饭金天要吃饭今天要吃饭今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
-//     },
-//     {
-//         id: 2,
-//         title: 'a',
-//         time: '2023-1-15 0:0:0',
-//         address: '南区大饭店',
-//         contents:
-//             '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
-//     },
-//     {
-//         id: 3,
-//         title: 'a',
-//         time: '2023-1-4 0:0:0',
-//         address: '南区大饭店',
-//         contents:
-//             '今天要吃饭<br />金天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭<br />今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭今天要吃饭'
-//     }
-//     // { id: 15, title: 'a', time: '2023.1.8', address: '南区大饭店' },
-//     // { id: 5, title: 'a', time: '2023.1.6', address: '南区大饭店' },
-//     // { id: 6, title: 'a', time: '2023.1.7', address: '南区大饭店' },
-//     // { id: 7, title: 'a', time: '2023.1.8', address: '南区大饭店' },
-//     // { id: 8, title: 'a', time: '2023.1.9', address: '南区大饭店' },
-//     // { id: 9, title: 'a', time: '2023.1.10', address: '南区大饭店' },
-//     // { id: 10, title: 'a', time: '2023.1.11', address: '南区大饭店' },
-//     // { id: 11, title: 'a', time: '2023.1.15', address: '南区大饭店' },
-//     // { id: 12, title: 'a', time: '2023.1.16', address: '南区大饭店' },
-//     // { id: 13, title: 'a', time: '2023.1.11', address: '南区大饭店' },
-//     // { id: 14, title: 'a', time: '2023.1.12', address: '南区大饭店' }
-// ]);
 
 const cardDefault: cardInfo = {
     id: -1,
@@ -174,7 +28,7 @@ const cardDefault: cardInfo = {
 
 const store = useStore();
 const loginSuccess = mapState(['login_success']);
-const sortMode = ['按默认排序', '按时间排序'];
+const sortMode = ['按默认排序', '按时间升序排序','按时间降序排序'];
 const sortOpe = ref('按默认排序');
 const showCard = ref(false);
 const cardValue = ref(cardDefault);
@@ -198,8 +52,8 @@ const getSchedule = () => {
                 };
             });
             listRef.list = list;
-            console.log(list);
-            console.log(listRef.list);
+            // console.log(list);
+            // console.log(listRef.list);
         })
         .catch(error => {
             ElMessage.error(error);
@@ -218,15 +72,18 @@ const sort = () => {
     if (sortOpe.value === sortMode[0]) {
         sortById();
     } else if (sortOpe.value === sortMode[1]) {
-        sortByDate();
+        sortByDate('asc');
+    } else {
+        sortByDate('desc');
     }
 };
 
-const sortByDate = () => {
+const sortByDate = (state: String) => {
     listRef.list = listRef.list.sort((a, b) => {
         const dateA = new Date(a.time);
         const dateB = new Date(b.time);
-        return dateA.getTime() - dateB.getTime();
+        if (state === 'asc') return dateA.getTime() - dateB.getTime();
+        return dateB.getTime() - dateA.getTime();
     });
 };
 
@@ -235,14 +92,15 @@ const handleClose = () => {
 };
 
 const deleteCard = (card: cardInfo) => {
-    console.log('delete card:' + card.id);
+    // console.log('delete card:' + card.id);
     axios
         .delete('schedule/delete/' + card.id)
         .then(() => {
-            const index = listRef.list.findIndex(item => item === card);
-            if (index !== -1) {
-                listRef.list.splice(index, 1);
-            }
+            // const index = listRef.list.findIndex(item => item === card);
+            // if (index !== -1) {
+            //     listRef.list.splice(index, 1);
+            // }
+            getSchedule();
         })
         .catch(error => {
             ElMessage.error(error.message);
@@ -305,11 +163,11 @@ const updateCard = (card: cardInfo) => {
         address: card.address,
         time: card.time
     };
-    console.log(data);
+    // console.log(data);
     if (card.id === -1) {
         axios
             .post('schedule/add/', data)
-            .then((response) => {
+            .then(response => {
                 card.id = response.data.schedule_id;
                 listRef.list.splice(-1, 0, card);
             })
@@ -320,8 +178,9 @@ const updateCard = (card: cardInfo) => {
         axios
             .put('schedule/update/' + card.id, data)
             .then(() => {
-                const index = listRef.list.findIndex(item => item.id === card.id);
-                listRef.list.splice(index, 1, card);
+                // const index = listRef.list.findIndex(item => item.id === card.id);
+                // listRef.list.splice(index, 1, card);
+                getSchedule();
             })
             .catch(error => {
                 ElMessage.error(error);
@@ -370,8 +229,12 @@ sortById();
                             <el-select v-model="sortOpe" @change="sort">
                                 <el-option :key="sortOpe" :value="sortMode[0]" />
                                 <el-option :key="sortOpe" :value="sortMode[1]" />
+                                <el-option :key="sortOpe" :value="sortMode[2]" />
                             </el-select>
                         </el-col>
+                    </el-row>
+                    <el-row>
+                        
                     </el-row>
                 </el-row>
 

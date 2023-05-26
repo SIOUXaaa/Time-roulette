@@ -12,14 +12,24 @@
                     <el-icon :size="20"> <UserFilled /> </el-icon>
                     <span>{{ store.state.username }}</span>
                 </template>
-                <el-menu-item index="me">
-                    <el-icon><User /></el-icon>
-                    <span>我的主页</span>
-                </el-menu-item>
-                <el-menu-item @click="handleQuit">
-                    <el-icon><SwitchButton /></el-icon>
-                    <span>退出登陆</span>
-                </el-menu-item>
+                <!-- <el-col class="user" :gutter="12"> -->
+                <el-col class="userData">
+                    <el-row class="avatar">
+                        <el-icon :size="20"> <UserFilled /> </el-icon>
+                    </el-row>
+                    <el-row class="name" @click="edit">
+                        <span>{{ store.state.username }}</span>
+                        <el-icon size="20" class="edit"><Edit /></el-icon>
+                    </el-row>
+                    <el-row class="button">
+                        <el-button type="danger">
+                            <el-icon><SwitchButton /></el-icon>
+                            退出登陆
+                        </el-button>
+                    </el-row>
+                </el-col>
+
+                <!-- </el-col> -->
             </el-sub-menu>
         </el-row>
         <el-row v-else>
@@ -53,9 +63,11 @@ const handleSelect = (index: string) => {
 
 const handleQuit = () => {
     store.dispatch('quit').then(() => {
-        router.push('/login')
-    })
-}
+        router.push('/login');
+    });
+};
+
+const edit = () => {};
 </script>
 
 <style scoped>
@@ -74,5 +86,33 @@ const handleQuit = () => {
     height: min-content;
     padding: 0px;
     margin: 10px;
+}
+
+.userData {
+    width: 100%;
+    height: 150px;
+    margin-top: 15px;
+    justify-content: center;
+}
+.avatar {
+    width: 100%;
+    height: 50px;
+    justify-content: center;
+}
+
+.edit {
+    margin-left: 5px;
+}
+
+.name {
+    font-size: 15px;
+    margin: 10px;
+    justify-content: center;
+}
+
+.button {
+    justify-content: center;
+    margin: 20px;
+    /* margin-bottom: 10px; */
 }
 </style>

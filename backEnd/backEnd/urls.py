@@ -27,6 +27,7 @@ urlpatterns = [
     path('schedule/delete/<int:schedule_id>', views.delete_schedule),
     path('schedule/deleteAll/<int:user_id>', views.delete_all_schedule),
     path('memo/get/<int:user_id>', views.get_memo),
+    path('memo/getDone/<int:user_id>', views.get_memo_done),
     path('memo/add/', views.add_memo),
     path('memo/update/<int:memo_id>', views.update_memo),
     path('memo/delete/<int:memo_id>', views.delete_memo),

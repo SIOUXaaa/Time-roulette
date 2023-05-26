@@ -26,12 +26,10 @@ const memoRef = toRef(props, 'memo');
 watch(
     () => props.memo.done,
     newValue => {
-        if (newValue) {
-            setTimeout(() => {
-                props.updateDone(memoRef.value);
-            }, 250);
-            // props.updateDone(memoRef.value);
-        }
+        setTimeout(() => {
+            props.updateDone(memoRef.value);
+        }, 250);
+        // props.updateDone(memoRef.value);
     }
 );
 </script>

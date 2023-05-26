@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import '../style.css';
-import { reactive, computed, ref } from 'vue';
+import { reactive, computed, ref, onMounted } from 'vue';
 import TopBar from '../components/TopBar.vue';
 import LeftMenu from '../components/LeftMenu.vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import MemoDetails from '../components/MemoDetails.vue';
+import axios from 'axios';
+import store from '../store';
 
 export type memoInfo = {
     id: number;
@@ -22,59 +24,169 @@ const memoDefault: memoInfo = {
     time: '2000-1-1 0:0:0'
 };
 
+let list: memoInfo[] = [];
+let listDone: memoInfo[] = [];
 const listRef = reactive({
-    list: [
-        { id: 1, contents: '今天要吃饭', done: false,remained: false, time: '2000-1-1 0:0:0' },
-        { id: 2, contents: '今天要吃饭', done: false ,reminded: false, time: '2000-1-1 0:0:0'},
-        { id: 3, contents: '今天要吃饭', done: false ,reminded: false, time: '2000-1-1 0:0:0'},
-        { id: 4, contents: '今天要吃饭', done: false ,reminded: false, time: '2000-1-1 0:0:0'},
-        { id: 5, contents: '今天要吃饭', done: false ,reminded: false, time: '2000-1-1 0:0:0'},
-        { id: 6, contents: '今天要吃饭', done: false ,reminded: false, time: '2000-1-1 0:0:0'},
-        { id: 7, contents: '今天要吃饭', done: false ,reminded: false, time: '2000-1-1 0:0:0'},
-        { id: 8, contents: '今天要吃饭', done: false ,reminded: false, time: '2000-1-1 0:0:0'},
-        { id: 9, contents: '今天要吃饭', done: false ,reminded: false, time: '2000-1-1 0:0:0'},
-        { id: 10, contents: '今天要吃饭', done: false,reminded: false, time: '2000-1-1 0:0:0' }
-    ]
+    list: list
 });
-
-const listDone = reactive({
-    list: [
-        { id: 11, contents: '今天要吃饭', done: true ,reminded: false, time: '2000-1-1 0:0:0'},
-        { id: 12, contents: '今天要吃饭', done: true ,reminded: false, time: '2000-1-1 0:0:0'},
-        { id: 13, contents: '今天要吃饭', done: true ,reminded: false, time: '2000-1-1 0:0:0'},
-        { id: 14, contents: '今天要吃饭', done: true ,reminded: false, time: '2000-1-1 0:0:0'},
-        { id: 15, contents: '今天要吃饭', done: true ,reminded: false, time: '2000-1-1 0:0:0'},
-        { id: 16, contents: '今天要吃饭', done: true ,reminded: false, time: '2000-1-1 0:0:0'},
-        { id: 17, contents: '今天要吃饭', done: true ,reminded: false, time: '2000-1-1 0:0:0'},
-        { id: 18, contents: '今天要吃饭', done: true ,reminded: false, time: '2000-1-1 0:0:0'}
-    ]
+const listDoneRef = reactive({
+    list: listDone
 });
-
 
 const activeCollapse = ref('unfinished');
 const memoValue = ref(memoDefault);
-const showMemo = ref(false)
+const showMemo = ref(false);
 
-const updateDone = (memo: memoInfo) => {
-    console.log(memo);
-    const index = listRef.list.findIndex(item => item.id === memo.id);
-    listRef.list.splice(index, 1);
-    listDone.list.push(memo);
+const getMemo = () => {
+    axios
+        .get('memo/get/' + store.state.id)
+        .then(response => {
+            list = response.data.map((item: any) => {
+                return {
+                    id: item.memo_id,
+                    contents: item.contents,
+                    done: item.done,
+                    reminded: item.reminded,
+                    time: item.time
+                };
+            });
+            listRef.list = list;
+        })
+        .catch(error => {
+            ElMessage.error(error);
+        });
 };
 
-const updateMemo = (memo: memoInfo) => {};
+const getMemoDone = () => {
+    axios
+        .get('memo/getDone/' + store.state.id)
+        .then(response => {
+            list = response.data.map((item: any) => {
+                return {
+                    id: item.memo_id,
+                    contents: item.contents,
+                    done: item.done,
+                    reminded: item.reminded,
+                    time: item.time
+                };
+            });
+            listDoneRef.list = list;
+        })
+        .catch(error => {
+            ElMessage.error(error);
+        });
+};
+
+const updateDone = (memo: memoInfo) => {
+    // console.log(memo);
+    let data;
+    if (memo.reminded) {
+        data = {
+            user: store.state.id,
+            contents: memo.contents,
+            done: memo.done,
+            reminded: memo.reminded,
+            time: memo.time
+        };
+    } else {
+        data = {
+            user: store.state.id,
+            contents: memo.contents,
+            done: memo.done,
+            reminded: memo.reminded
+        };
+    }
+    if (memo.id === -1) {
+        updateMemo(memo);
+    } else {
+        // console.log(data);
+        axios
+            .put('memo/update/' + memo.id, data)
+            .then(() => {
+                if (memo.done) {
+                    // const index = listRef.list.findIndex(item => item.id === memo.id);
+                    // listRef.list.splice(index, 1);
+                    // listDoneRef.list.push(memo);
+                    getMemo();
+                    getMemoDone();
+                } else {
+                    // const index = listDoneRef.list.findIndex(item => item.id === memo.id);
+                    // listDoneRef.list.splice(index, 1);
+                    // listRef.list.push(memo);
+                    getMemo();
+                    getMemoDone();
+                }
+            })
+            .catch(error => {
+                ElMessage.error(error.message);
+            });
+    }
+};
+
+const updateMemo = (memo: memoInfo) => {
+    let data;
+    if (memo.reminded) {
+        data = {
+            user: store.state.id,
+            contents: memo.contents,
+            done: memo.done,
+            reminded: memo.reminded,
+            time: memo.time
+        };
+    } else {
+        data = {
+            user: store.state.id,
+            contents: memo.contents,
+            done: memo.done,
+            reminded: memo.reminded
+        };
+    }
+    // console.log(data);
+    axios
+        .post('memo/add/', data)
+        .then(response => {
+            memo.id = response.data.memo_id;
+            // console.log(memo);
+            // listRef.list.splice(-1, 0, memo);
+            getMemo();
+            getMemoDone();
+            // console.log(memo);
+        })
+        .catch(error => {
+            ElMessage.error(error.message);
+        });
+    handleClose();
+};
 
 const addMemo = () => {
     showMemo.value = true;
-    console.log(listRef.list);
-    console.log(listDone.list);
+    // console.log(listRef.list);
+    // console.log(listDoneRef.list);
 };
 
-const clearDone = () => { };
+const clearDone = () => {
+    axios
+        .put('memo/deleteAll/' + store.state.id)
+        .then(response => {
+            ElMessage.success('所有代办已完成');
+            getMemo();
+            // console.log(listRef.list);
+            getMemoDone();
+            // console.log(listDoneRef.list);
+        })
+        .catch(error => {
+            ElMessage.error(error.message);
+        });
+};
 
 const handleClose = () => {
     showMemo.value = false;
-}
+};
+
+onMounted(() => {
+    getMemo();
+    getMemoDone();
+});
 </script>
 
 <template>
@@ -83,10 +195,10 @@ const handleClose = () => {
             <TopBar />
         </div>
         <el-row class="main">
-            <MemoDetails 
+            <MemoDetails
                 :memo="memoValue"
                 :visible="showMemo"
-                :update-memo="addMemo"
+                :updateMemo="updateMemo"
                 :before-close="handleClose"
             />
             <el-col :span="4" class="left">
@@ -96,7 +208,7 @@ const handleClose = () => {
                             <el-button type="primary" @click="addMemo">添加</el-button>
                         </el-col>
                         <el-col :span="12">
-                            <el-button type="primary" @click="">清空</el-button>
+                            <el-button type="primary" @click="clearDone">清空</el-button>
                         </el-col>
                     </el-row>
                 </el-row>
@@ -115,52 +227,58 @@ const handleClose = () => {
                         show-icon
                         center
                     />
-                    <el-scrollbar class="scrollbar">
-                        <el-collapse class="collapse" v-model="activeCollapse">
-                            <el-collapse-item
-                                class="collapse-item"
-                                title="未完成"
-                                name="unfinished"
-                            >
-                                <el-row :span="24">
-                                    <transition-group name="el-zoom-in-center">
-                                        <el-col
-                                            :span="12"
-                                            v-for="item in listRef.list"
-                                            :key="item.id"
-                                        >
-                                            <MemoItem
-                                                class="memo"
+                    <div class="mask">
+                        <el-scrollbar class="scrollbar">
+                            <el-collapse class="collapse" v-model="activeCollapse">
+                                <el-collapse-item
+                                    class="collapse-item"
+                                    title="未完成"
+                                    name="unfinished"
+                                >
+                                    <el-row :span="24">
+                                        <transition-group name="el-zoom-in-center">
+                                            <el-col
+                                                :span="12"
+                                                v-for="item in listRef.list"
                                                 :key="item.id"
-                                                :memo="item"
-                                                :updateMemo="updateMemo"
-                                                :updateDone="updateDone"
-                                            />
-                                        </el-col>
-                                    </transition-group>
-                                </el-row>
-                            </el-collapse-item>
-                            <el-collapse-item class="collapse-item" title="已完成" name="finished">
-                                <el-row class="" :span="24">
-                                    <transition-group name="el-zoom-in-center">
-                                        <el-col
-                                            :span="12"
-                                            v-for="item in listDone.list"
-                                            :key="item.id"
-                                        >
-                                            <MemoItem
-                                                class="memo"
+                                            >
+                                                <MemoItem
+                                                    class="memo"
+                                                    :key="item.id"
+                                                    :memo="item"
+                                                    :updateMemo="updateMemo"
+                                                    :updateDone="updateDone"
+                                                />
+                                            </el-col>
+                                        </transition-group>
+                                    </el-row>
+                                </el-collapse-item>
+                                <el-collapse-item
+                                    class="collapse-item"
+                                    title="已完成"
+                                    name="finished"
+                                >
+                                    <el-row class="" :span="24">
+                                        <transition-group name="el-zoom-in-center">
+                                            <el-col
+                                                :span="12"
+                                                v-for="item in listDoneRef.list"
                                                 :key="item.id"
-                                                :memo="item"
-                                                :updateMemo="updateMemo"
-                                                :updateDone="updateDone"
-                                            />
-                                        </el-col>
-                                    </transition-group>
-                                </el-row>
-                            </el-collapse-item>
-                        </el-collapse>
-                    </el-scrollbar>
+                                            >
+                                                <MemoItem
+                                                    class="memo"
+                                                    :key="item.id"
+                                                    :memo="item"
+                                                    :updateMemo="updateMemo"
+                                                    :updateDone="updateDone"
+                                                />
+                                            </el-col>
+                                        </transition-group>
+                                    </el-row>
+                                </el-collapse-item>
+                            </el-collapse>
+                        </el-scrollbar>
+                    </div>
                 </el-row>
                 <!-- </el-col> -->
             </el-col>
@@ -184,6 +302,13 @@ const handleClose = () => {
     display: flex;
     height: calc(100vh - 70px);
     margin-bottom: 10px;
+}
+
+.mask {
+    width: 100%;
+    max-height: calc(100vh - 100px);
+    padding-bottom: 15px;
+    -webkit-mask-image: linear-gradient(rgb(227, 227, 227), 90%, transparent);
 }
 
 .left {
@@ -229,6 +354,8 @@ const handleClose = () => {
     margin: 0 auto;
 }
 .alertNull {
+    position: fixed;
+    z-index: 999;
     margin-top: 10px;
     width: 500px;
 }

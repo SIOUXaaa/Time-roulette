@@ -47,13 +47,12 @@ class ScheduleSerializers(serializers.ModelSerializer):
 
 
 class MemoSerializers(serializers.ModelSerializer):
-    time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+    time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", required=False)
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
     def update(self, instance, validated_data):
         instance.contents = validated_data.get('contents', instance.contents)
         instance.done = validated_data.get('done', instance.done)
-        instance.reminded = validated_data.get('reminded', instance.reminded)
         instance.reminded = validated_data.get('reminded', instance.reminded)
         instance.time = validated_data.get('time', instance.time)
         instance.save()
@@ -61,7 +60,7 @@ class MemoSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = Memo
-        fields = ['memo_id', 'user', 'contents', 'contents', 'done', 'reminded', 'time']
+        fields = ['memo_id', 'user', 'contents', 'done', 'reminded', 'time']
 
 
 @api_view(['POST'])
@@ -123,9 +122,6 @@ def update_schedule(req, schedule_id):
 
 @api_view(['POST'])
 def add_schedule(req):
-    user_id = req.data.get('user')
-    user = User.objects.get(id=user_id)
-
     serializer = ScheduleSerializers(data=req.data)
     if serializer.is_valid():
         serializer.save()
@@ -156,8 +152,15 @@ def delete_all_schedule(req, user_id):
 
 @api_view(['GET'])
 def get_memo(req, user_id):
-    memos = Memo.objects.filter(user=user_id)
+    memos = Memo.objects.filter(user=user_id, done=False)
     # print(memos.values())
+    serializer = MemoSerializers(memos, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_memo_done(req, user_id):
+    memos = Memo.objects.filter(user=user_id, done=True)
     serializer = MemoSerializers(memos, many=True)
     return Response(serializer.data)
 
@@ -166,8 +169,10 @@ def get_memo(req, user_id):
 def add_memo(req):
     serializer = MemoSerializers(data=req.data)
     if serializer.is_valid():
+        serializer.save()
         return Response(serializer.data)
     else:
+        print(serializer.errors)
         return Response(serializer.errors)
 
 
@@ -176,7 +181,7 @@ def update_memo(req, memo_id):
     try:
         memo = Memo.objects.get(pk=memo_id)
     except Memo.DoesNotExist:
-        return Response(status=404)
+        return Response({'msg': 'not found'}, status=404)
 
     serializer = MemoSerializers(memo, data=req.data)
     if serializer.is_valid():
@@ -196,11 +201,16 @@ def delete_memo(req, memo_id):
         return Response(status=404)
 
 
-@api_view(['DELETE'])
+@api_view(['PUT'])
 def delete_all_memo(req, user_id):
     try:
         memos = Memo.objects.filter(user=user_id)
-        memos.delete()
-        return Response({"msg": "删除成功"}, status=204)
+        for memo in memos:
+            memo.done = True
+            memo.save()
+        serializer = MemoSerializers(data=memos, many=True)
+        if serializer.is_valid():
+            serializer.save()
+        return Response({"msg": "清除代办成功"}, status=204)
     except Memo.DoesNotExist:
         return Response(status=404)

@@ -26,7 +26,7 @@ const handleSelect = (index: string) => {
         </el-menu-item>
         <el-menu-item index="memo" class="item">
             <el-icon><List /></el-icon>
-            <span>备忘录</span>
+            <span>代办</span>
         </el-menu-item>
     </el-menu>
 </template>
