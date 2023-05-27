@@ -5,6 +5,7 @@ import { onMounted, reactive, ref, defineComponent, toRef } from 'vue';
 import registerDiv from './register.vue';
 import { useRouter } from 'vue-router';
 import { mapActions, useStore, mapState } from 'vuex';
+import bcrypt from 'bcryptjs';
 
 defineComponent({
     name: 'loginDiv'

@@ -5,6 +5,7 @@ import TopBar from '../components/TopBar.vue';
 import LeftMenu from '../components/LeftMenu.vue';
 import Card from '../components/Card.vue';
 import CardDetails from '../components/cardDetails.vue';
+import user from '../components/user.vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { mapActions, useStore, mapState } from 'vuex';
 import axios from 'axios';
@@ -28,10 +29,12 @@ const cardDefault: cardInfo = {
 
 const store = useStore();
 const loginSuccess = mapState(['login_success']);
-const sortMode = ['按默认排序', '按时间升序排序','按时间降序排序'];
+const sortMode = ['按默认排序', '按时间升序排序', '按时间降序排序'];
 const sortOpe = ref('按默认排序');
 const showCard = ref(false);
 const cardValue = ref(cardDefault);
+const showUser = ref(false);
+
 let list: cardInfo[] = [];
 const listRef = reactive({
     list: list
@@ -199,13 +202,17 @@ const editCard = (card: cardInfo) => {
     showCard.value = true;
 };
 
+const editUser = () => {
+    showUser.value = true;
+};
+
 sortById();
 </script>
 
 <template>
     <div class="all">
         <div class="TopMenu">
-            <TopBar />
+            <TopBar :editUser="editUser" />
         </div>
         <el-row class="main">
             <CardDetails
@@ -214,6 +221,7 @@ sortById();
                 :visible="showCard"
                 :before-close="handleClose"
             />
+            <user :visible="showUser" />
             <el-col :span="4" class="left">
                 <el-row class="control" justify="space-evenly" align="middle">
                     <el-row :gutter="20">
@@ -233,9 +241,7 @@ sortById();
                             </el-select>
                         </el-col>
                     </el-row>
-                    <el-row>
-                        
-                    </el-row>
+                    <el-row> </el-row>
                 </el-row>
 
                 <LeftMenu class="LeftMenu" :activeIndex="'schedule'" />
@@ -243,15 +249,15 @@ sortById();
             <el-col :span="18" :flex="1" class="right">
                 <div class="mask">
                     <el-scrollbar>
-                        <el-alert
-                            class="alertNull"
-                            v-show="listRef.list.length === 0"
-                            title="还没有日程捏，速速创建"
-                            type="warning"
-                            show-icon
-                            center
-                        />
                         <el-row class="schedule-items">
+                            <el-alert
+                                class="alertNull"
+                                v-show="listRef.list.length === 0"
+                                title="还没有日程捏，速速创建"
+                                type="warning"
+                                show-icon
+                                center
+                            />
                             <!-- <el-col :span="6" v-for="{ id, time } in list" :key="id" class="schedule"> -->
                             <transition-group name="el-zoom-in-center">
                                 <Card
@@ -337,7 +343,9 @@ sortById();
     margin: 0 auto;
 }
 .alertNull {
+    position: fixed;
+    z-index: 999;
     margin-top: 10px;
-    min-width: 500px;
+    width: 500px;
 }
 </style>

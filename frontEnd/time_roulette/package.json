@@ -11,6 +11,7 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.1.0",
     "axios": "^1.4.0",
+    "bcryptjs": "^2.4.3",
     "js-md5": "^0.7.3",
     "jsencrypt": "^3.3.2",
     "prettier": "^2.8.7",
@@ -19,6 +20,7 @@
     "vuex": "^4.1.0"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
     "@types/js-md5": "^0.7.0",
     "@vitejs/plugin-vue": "^4.1.0",
     "element-plus": "^2.3.3",

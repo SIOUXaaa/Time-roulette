@@ -5,6 +5,7 @@ import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
 import { mapActions, useStore, mapState } from 'vuex';
 import router from '../router';
+import bcrypt from 'bcryptjs';
 
 defineComponent({
     name: 'registerDiv'
@@ -56,7 +57,8 @@ const handleRegister = () => {
                         ElMessage.success('注册成功, 点击登录进行登录吧');
                     })
                     .catch(error => {
-                        ElMessage.error(error.message);
+                        
+                        ElMessage.error(error.response.data.msg);
                     });
             }
         });

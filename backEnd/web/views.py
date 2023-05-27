@@ -1,3 +1,9 @@
+import os
+
+from django.conf import settings
+from django.contrib.auth.hashers import make_password, check_password
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.shortcuts import render, HttpResponse, get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
@@ -12,7 +18,7 @@ class UserSerializers(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     name = serializers.CharField(max_length=255)
     password = serializers.CharField(max_length=255)  # Field renamed because it was a Python reserved word.
-    avatar = serializers.ImageField(max_length=255, required=False)
+    avatar = serializers.ImageField(max_length=255, required=False, source='avatar.url')
 
     def create(self, validated_data):
         password = validated_data.pop('password')
@@ -23,6 +29,11 @@ class UserSerializers(serializers.ModelSerializer):
             user.avatar = avatar
         user.save()
         return user
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.name
+        instance.password = validated_data.name
+        instance.avatar = validated_data.avatar
 
     class Meta:
         model = User
@@ -63,20 +74,31 @@ class MemoSerializers(serializers.ModelSerializer):
         fields = ['memo_id', 'user', 'contents', 'done', 'reminded', 'time']
 
 
+# {
+#      username,
+#      password
+# }
 @api_view(['POST'])
 def login(req):
     username = req.data.get('username')
     password = req.data.get('password')
     try:
         user = User.objects.get(name=username)
-        # serializer = UserSerializers(instance=user, many=False)
-        if user.password == password:
-            data = {
-                'id': user.id,
-                'name': user.name,
-                # 'avatar': user.avatar,
-                'login_success': True
-            }
+        password_match = check_password(password, user.password)
+        if password_match:
+            if user.avatar:
+                data = {
+                    'id': user.id,
+                    'name': user.name,
+                    'login_success': True,
+                    'avatar': user.avatar.url
+                }
+            else:
+                data = {
+                    'id': user.id,
+                    'name': user.name,
+                    'login_success': True,
+                }
         else:
             data = {
                 'msg': '密码错误',
@@ -87,14 +109,96 @@ def login(req):
         return Response('用户不存在')
 
 
+# {
+#     name
+#     password
+# }
 @api_view(['POST'])
 def register(req):
+    if User.objects.filter(name=req.data.get('name')).exists():
+        return Response({'msg': '用户名已存在'}, status=400)
     serializer = UserSerializers(data=req.data)
     if serializer.is_valid():
+        serializer.validated_data['password'] = make_password(req.data['password'])
         serializer.save()
         return Response(serializer.data, status=201)
     else:
         return Response(serializer.errors, status=400)
+
+
+@api_view(['POST'])
+def upload_avatar(req, user_id):
+    try:
+        user = User.objects.get(pk=user_id)
+        avatar = req.FILES.get('file')
+        if user.avatar:
+            old_avatar = os.path.join(settings.MEDIA_ROOT, f'avatar/{user.avatar}')
+            if default_storage.exists(old_avatar):
+                default_storage.delete(old_avatar)
+        file_ext = os.path.splitext(avatar.name)[1]
+        file_path = f'avatar/{user_id}_avatar' + file_ext
+        file_path = default_storage.save(file_path,
+                                         ContentFile(avatar.read()))
+        user.avatar = file_path
+        user.save()
+        serializer = UserSerializers(data=user)
+        if serializer.is_valid():
+            serializer.save()
+        else:
+            return Response(serializer.errors)
+    except User.DoesNotExist:
+        return Response(status=404)
+    return Response({'success': True, 'file_path': file_path})
+
+
+@api_view(['GET'])
+def get_avatar(req, user_id):
+    try:
+        user = User.objects.get(pk=user_id)
+        data = {
+            'avatar': user.avatar.url
+        }
+        return Response(data)
+    except User.DoesNotExist:
+        return Response(status=404)
+
+
+# {
+#     "username": "test11"
+# }
+@api_view(['PUT'])
+def update_username(req, user_id):
+    try:
+        user = User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        return Response({'msg': '用户不存在'}, status=404)
+    username = req.data.get('username')
+    if username and User.objects.filter(name=username).exclude(id=user_id).exists():
+        return Response({'msg': '用户名已存在'}, status=400)
+    if username:
+        user.name = username
+        user.save()
+    return Response({'msg': '提交成功'}, status=200)
+
+
+# {
+#     "password"
+#     "newPassword"
+# }
+@api_view(['PUT'])
+def update_password(req, user_id):
+    try:
+        user = User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        return Response({'msg': '用户不存在'}, status=404)
+    password = req.data.get('password')
+    new_password = req.data.get('newPassword')
+    if check_password(password, user.password):
+        user.password = make_password(new_password)
+        user.save()
+    else:
+        return Response({'msg': '密码错误'}, status=400)
+    return Response({'msg': '更改密码成功'}, status=200)
 
 
 @api_view(['GET'])

@@ -9,20 +9,31 @@
         <el-row v-if="login_success">
             <el-sub-menu index="">
                 <template #title>
-                    <el-icon :size="20"> <UserFilled /> </el-icon>
-                    <span>{{ store.state.username }}</span>
+                    <el-avatar v-if="avatar" :src="'http://127.0.0.1:8000' + avatar" />
+                    <el-avatar v-else :icon="UserFilled" />
+                    <span style="margin-left: 10px">{{ username }}</span>
                 </template>
                 <!-- <el-col class="user" :gutter="12"> -->
                 <el-col class="userData">
                     <el-row class="avatar">
-                        <el-icon :size="20"> <UserFilled /> </el-icon>
+                        <img
+                            v-if="avatar"
+                            :src="'http://127.0.0.1:8000' + avatar"
+                            class="avatar"
+                            style="
+                                background-color: #cdd0d6;
+                                border-radius: 9999px;
+                                width: 50px;
+                                height: 50px;
+                            "
+                        />
                     </el-row>
-                    <el-row class="name" @click="edit">
+                    <el-row class="name" @click="editUser">
                         <span>{{ store.state.username }}</span>
                         <el-icon size="20" class="edit"><Edit /></el-icon>
                     </el-row>
                     <el-row class="button">
-                        <el-button type="danger">
+                        <el-button type="danger" @click="handleQuit">
                             <el-icon><SwitchButton /></el-icon>
                             退出登陆
                         </el-button>
@@ -44,8 +55,8 @@
 </template>
 
 <script lang="ts" setup>
-import { UserFilled } from '@element-plus/icons-vue';
-import { defineComponent, ref } from 'vue';
+import { SwitchButton, UserFilled } from '@element-plus/icons-vue';
+import { defineComponent, ref, toRefs } from 'vue';
 import { mapActions, useStore, mapState } from 'vuex';
 import router from '../router';
 
@@ -53,10 +64,14 @@ defineComponent({
     name: 'TopBar'
 });
 
+const props = defineProps({
+    editUser: Function
+});
+
 const store = useStore();
 const activeIndex = ref('home');
-const login_success = mapState(['login_success']);
-
+// const login_success = mapState(['login_success']);
+const { avatar, login_success, id, username } = toRefs(store.state);
 const handleSelect = (index: string) => {
     activeIndex.value = index;
 };
@@ -75,7 +90,6 @@ const edit = () => {};
     display: flex;
     width: 100%;
     height: 60px;
-    display: flex;
     align-items: center;
     justify-content: right;
     padding: 0 20px;
@@ -110,6 +124,15 @@ const edit = () => {};
     justify-content: center;
 }
 
+.name:hover span {
+    cursor: pointer;
+    color: #409eff;
+}
+
+.name:hover .edit {
+    cursor: pointer;
+    color: #409eff;
+}
 .button {
     justify-content: center;
     margin: 20px;

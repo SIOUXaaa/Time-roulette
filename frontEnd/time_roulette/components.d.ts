@@ -33,6 +33,7 @@ declare module '@vue/runtime-core' {
     ElForm: typeof import('element-plus/es')['ElForm']
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
     ElIcon: typeof import('element-plus/es')['ElIcon']
+    ElInpu: typeof import('element-plus/es')['ElInpu']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElInputtype: typeof import('element-plus/es')['ElInputtype']
     ElItem: typeof import('element-plus/es')['ElItem']
@@ -56,6 +57,8 @@ declare module '@vue/runtime-core' {
     ElTablre: typeof import('element-plus/es')['ElTablre']
     ElTabPane: typeof import('element-plus/es')['ElTabPane']
     ElTabs: typeof import('element-plus/es')['ElTabs']
+    ElUp: typeof import('element-plus/es')['ElUp']
+    ElUpload: typeof import('element-plus/es')['ElUpload']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     LeftMenu: typeof import('./src/components/LeftMenu.vue')['default']
     Login: typeof import('./src/components/login.vue')['default']
@@ -65,5 +68,6 @@ declare module '@vue/runtime-core' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TopBar: typeof import('./src/components/TopBar.vue')['default']
+    User: typeof import('./src/components/user.vue')['default']
   }
 }

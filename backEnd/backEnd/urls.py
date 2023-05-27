@@ -13,24 +13,30 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 from web import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('user/login/', views.login),
-    path('user/register/', views.register),
-    path('schedule/get/<int:user_id>', views.get_schedule),
-    path('schedule/add/', views.add_schedule),
-    path('schedule/update/<int:schedule_id>', views.update_schedule),
-    path('schedule/delete/<int:schedule_id>', views.delete_schedule),
-    path('schedule/deleteAll/<int:user_id>', views.delete_all_schedule),
-    path('memo/get/<int:user_id>', views.get_memo),
-    path('memo/getDone/<int:user_id>', views.get_memo_done),
-    path('memo/add/', views.add_memo),
-    path('memo/update/<int:memo_id>', views.update_memo),
-    path('memo/delete/<int:memo_id>', views.delete_memo),
-    path('memo/deleteAll/<int:user_id>', views.delete_all_memo),
+                  path('admin/', admin.site.urls),
+                  path('user/login/', views.login),
+                  path('user/register/', views.register),
+                  path('user/upload/avatar/<int:user_id>', views.upload_avatar),
+                  path('user/get/avatar/<int:user_id>', views.get_avatar),
+                  path('user/update/username/<int:user_id>', views.update_username),
+                  path('user/update/password/<int:user_id>', views.update_password),
+                  path('schedule/get/<int:user_id>', views.get_schedule),
+                  path('schedule/add/', views.add_schedule),
+                  path('schedule/update/<int:schedule_id>', views.update_schedule),
+                  path('schedule/delete/<int:schedule_id>', views.delete_schedule),
+                  path('schedule/deleteAll/<int:user_id>', views.delete_all_schedule),
+                  path('memo/get/<int:user_id>', views.get_memo),
+                  path('memo/getDone/<int:user_id>', views.get_memo_done),
+                  path('memo/add/', views.add_memo),
+                  path('memo/update/<int:memo_id>', views.update_memo),
+                  path('memo/delete/<int:memo_id>', views.delete_memo),
+                  path('memo/deleteAll/<int:user_id>', views.delete_all_memo),
 
-]
+              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
