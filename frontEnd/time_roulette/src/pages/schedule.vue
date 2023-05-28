@@ -94,6 +94,10 @@ const handleClose = () => {
     showCard.value = false;
 };
 
+const handleUserClose = () => {
+    showUser.value = false;
+};
+
 const deleteCard = (card: cardInfo) => {
     // console.log('delete card:' + card.id);
     axios
@@ -221,7 +225,7 @@ sortById();
                 :visible="showCard"
                 :before-close="handleClose"
             />
-            <user :visible="showUser" />
+            <user :visible="showUser" :handleClose="handleUserClose" :before-close="handleUserClose" />
             <el-col :span="4" class="left">
                 <el-row class="control" justify="space-evenly" align="middle">
                     <el-row :gutter="20">

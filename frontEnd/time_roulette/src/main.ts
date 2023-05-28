@@ -12,7 +12,7 @@ import store from './store'
 
 const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
-  app.component(key, component)
+    app.component(key, component)
 }
 app.component(ElCollapseTransition.name, ElCollapseTransition)
 app.use(ElementPlus)
@@ -20,5 +20,5 @@ app.use(router)
 app.use(store)
 app.mount('#app')
 
-axios.defaults.baseURL = 'http://127.0.0.1:8000'
+axios.defaults.baseURL = store.state.url;
 app.config.globalProperties.$http = axios;

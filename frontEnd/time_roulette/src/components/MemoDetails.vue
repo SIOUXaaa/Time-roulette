@@ -67,7 +67,7 @@ const addMemo = () => {
                     v-model="tempMemo.contents"
                 />
             </el-form-item>
-            <el-form-item label="提醒">
+            <!-- <el-form-item label="提醒">
                 <el-switch v-model="remain" :label="remainContents" />
             </el-form-item>
             <transition name="el-zoom-in-top">
@@ -78,8 +78,8 @@ const addMemo = () => {
                         placeholder="选择提醒时间"
                         value-format="YYYY-MM-DD hh:mm:ss"
                     />
-                </el-form-item>
-            </transition>
+                </el-form-item> -->
+            <!-- </transition> -->
             <el-form-item>
                 <el-row justify-content="center" class="buttons">
                     <el-col :span="6" :offset="6">

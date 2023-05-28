@@ -36,6 +36,7 @@ const listDoneRef = reactive({
 const activeCollapse = ref('unfinished');
 const memoValue = ref(memoDefault);
 const showMemo = ref(false);
+const showUser = ref(false);
 
 const getMemo = () => {
     axios
@@ -183,6 +184,14 @@ const handleClose = () => {
     showMemo.value = false;
 };
 
+const handleUserClose = () => {
+    showUser.value = false;
+};
+
+const editUser = () => {
+    showUser.value = true;
+};
+
 onMounted(() => {
     getMemo();
     getMemoDone();
@@ -192,7 +201,7 @@ onMounted(() => {
 <template>
     <div class="all">
         <div class="TopMenu">
-            <TopBar />
+            <TopBar :editUser="editUser" />
         </div>
         <el-row class="main">
             <MemoDetails
@@ -200,6 +209,11 @@ onMounted(() => {
                 :visible="showMemo"
                 :updateMemo="updateMemo"
                 :before-close="handleClose"
+            />
+            <user
+                :visible="showUser"
+                :handleClose="handleUserClose"
+                :before-close="handleUserClose"
             />
             <el-col :span="4" class="left">
                 <el-row class="control" justify="space-evenly" align="middle">

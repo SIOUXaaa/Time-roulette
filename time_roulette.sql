@@ -51,7 +51,7 @@ CREATE TRIGGER add_user
     ON user
     FOR EACH ROW
 BEGIN
-    SET NEW.id = (SELECT COUNT(*) + 1 FROM user);
+    SET NEW.id = (SELECT Max(id) + 1 FROM user);
 END;
 
 CREATE TRIGGER update_time

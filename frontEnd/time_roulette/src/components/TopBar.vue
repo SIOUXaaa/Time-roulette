@@ -9,7 +9,7 @@
         <el-row v-if="login_success">
             <el-sub-menu index="">
                 <template #title>
-                    <el-avatar v-if="avatar" :src="'http://127.0.0.1:8000' + avatar" />
+                    <el-avatar v-if="avatar" :src="store.state.url + avatar" />
                     <el-avatar v-else :icon="UserFilled" />
                     <span style="margin-left: 10px">{{ username }}</span>
                 </template>
@@ -18,14 +18,14 @@
                     <el-row class="avatar">
                         <img
                             v-if="avatar"
-                            :src="'http://127.0.0.1:8000' + avatar"
+                            :src="store.state.url + avatar"
                             class="avatar"
-                            style="
-                                background-color: #cdd0d6;
-                                border-radius: 9999px;
-                                width: 50px;
-                                height: 50px;
-                            "
+                            style="border-radius: 9999px; width: 50px; height: 50px"
+                        />
+                        <el-avatar
+                            v-else
+                            :icon="UserFilled"
+                            style="border-radius: 9999px; width: 50px; height: 50px"
                         />
                     </el-row>
                     <el-row class="name" @click="editUser">

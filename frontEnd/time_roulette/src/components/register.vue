@@ -56,8 +56,7 @@ const handleRegister = () => {
                     .then(() => {
                         ElMessage.success('注册成功, 点击登录进行登录吧');
                     })
-                    .catch(error => {
-                        
+                    .catch(error => {                     
                         ElMessage.error(error.response.data.msg);
                     });
             }

@@ -7,7 +7,8 @@ export default createStore({
         username: "",
         avatar: "",
         login_success: false,
-        saltRound: 10
+        saltRound: 10,
+        url: 'http://172.29.26.84:8000'
     },
     mutations: {
         SET_LOGIN_STATE(state, login_success) {

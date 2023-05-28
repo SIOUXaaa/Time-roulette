@@ -9,7 +9,8 @@ defineComponent({
     name: 'user'
 });
 const props = defineProps({
-    visible: Boolean
+    visible: Boolean,
+    handleClose: Function
 });
 
 const { visible } = toRefs(props);
@@ -17,15 +18,20 @@ const changePass = ref(false);
 const password = ref('');
 const newPassword = ref('');
 const passwordCheck = ref('');
-const postURL = 'http://127.0.0.1:8000/user/upload/avatar/' + store.state.id;
+const postURL = store.state.url + '/user/upload/avatar/' + store.state.id;
 const { avatar, username, id, login_success } = toRefs(store.state);
-const newUserName = ref('')
+const newUserName = ref(username.value);
 const handleAvatarSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
     // avatar.value = URL.createObjectURL(uploadFile.raw!);
     // imageUrl.value = response.data.file_path;
-    store.dispatch('getAvatar').catch(error => {
-        ElMessage.error(error.message);
-    });
+    store
+        .dispatch('getAvatar')
+        .then(() => {
+            ElMessage.success('上传头像成功');
+        })
+        .catch(error => {
+            ElMessage.error(error.message);
+        });
 };
 
 const beforeAvatarUpload: UploadProps['beforeUpload'] = rawFile => {
@@ -46,6 +52,8 @@ const handleChange = () => {
         })
         .then(() => {
             ElMessage.success('更改昵称成功');
+            store.commit('SET_USER', newUserName.value);
+            props.handleClose!();
         })
         .catch(error => {
             ElMessage.error(error.response.data.msg);
@@ -58,7 +66,8 @@ const handleChange = () => {
             })
             .then(() => {
                 ElMessage.success('更改密码成功');
-            }).catch(error => {
+            })
+            .catch(error => {
                 ElMessage.error(error.response.data.msg);
             });
     }
@@ -80,7 +89,7 @@ const uploadAvatar = () => {};
                     >
                         <img
                             v-if="avatar"
-                            :src="'http://127.0.0.1:8000' + avatar"
+                            :src="store.state.url + avatar"
                             class="avatar"
                             style="
                                 background-color: #cdd0d6;
@@ -99,8 +108,9 @@ const uploadAvatar = () => {};
                                 width: 75px;
                                 height: 75px;
                             "
-                            ><Plus
-                        /></el-icon>
+                        >
+                            <Plus />
+                        </el-icon>
                     </el-upload>
                 </el-col>
             </el-row>

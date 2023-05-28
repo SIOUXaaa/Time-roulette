@@ -33,7 +33,7 @@ class UserSerializers(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.name = validated_data.name
         instance.password = validated_data.name
-        instance.avatar = validated_data.avatar
+        # instance.avatar = validated_data.avatar
 
     class Meta:
         model = User
@@ -121,7 +121,7 @@ def register(req):
     if serializer.is_valid():
         serializer.validated_data['password'] = make_password(req.data['password'])
         serializer.save()
-        return Response(serializer.data, status=201)
+        return Response({'msg': '注册成功'}, status=201)
     else:
         return Response(serializer.errors, status=400)
 
