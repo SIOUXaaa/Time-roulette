@@ -85,7 +85,7 @@ WSGI_APPLICATION = 'backEnd.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'time_roulette',
+        'NAME': 'time_roulette', #数据库名，用户名，密码，地址，端口
         'USER': 'root',
         'PASSWORD': '122588',
         'HOST': '127.0.0.1',

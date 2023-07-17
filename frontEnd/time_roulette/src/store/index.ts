@@ -8,7 +8,8 @@ export default createStore({
         avatar: "",
         login_success: false,
         saltRound: 10,
-        url: 'http://172.29.26.84:8000'
+        url: 'http://172.29.26.221:8000'
+        // url: 'http://127.0.0.1:8000'
     },
     mutations: {
         SET_LOGIN_STATE(state, login_success) {
@@ -76,6 +77,7 @@ export default createStore({
         }
     },
     modules: {
+        
     }
 })
 

@@ -204,7 +204,6 @@ def update_password(req, user_id):
 @api_view(['GET'])
 def get_schedule(req, user_id):
     schedules = Schedule.objects.filter(user=user_id)
-    # print(schedules.values())
     serializer = ScheduleSerializers(schedules, many=True)
     return Response(serializer.data)
 

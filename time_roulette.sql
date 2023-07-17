@@ -8,7 +8,7 @@ CREATE TABLE user
     id   int(11) primary key NOT NULL AUTO_INCREMENT,
     name varchar(255) UNIQUE NULL DEFAULT NULL,
     password varchar(255)        NULL DEFAULT NULL,
-    avatar varchar(255) NULL DEFAULT './avatar',
+    avatar varchar(255) NULL DEFAULT 'avatar/',
     time timestamp(0)        NULL DEFAULT CURRENT_TIMESTAMP(0)
 );
 
